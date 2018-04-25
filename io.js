@@ -52,27 +52,17 @@ function load_triangle_data(url)
                    // }
                    for(i = 1; i <= point_size; i++)
                    {
-                    if(i>point_size/2)continue;
+                    // if(i>10)continue;
                       var point = lines[i].split(' ');
                       var p = new THREE.Vector3(point[0], point[1], point[2]);
-                      if(i==1)
-                      {
-                          console.log(point[0]);
-                          console.log(point[1]);
-                          console.log(point[2]);
-                      }
                       geometry.vertices.push(p);
                    }
                    for( ; i < lines.length; i++)
                    {
-                      if(lines.length<1)
+                      if(lines[i].length<1)
                         continue;
                       var face = lines[i].split(' ');
-                      if(face[0]>point_size/2)continue;
-                      if(face[1]>point_size/2)continue;
-                      if(face[2]>point_size/2)continue;
-                      var f = new THREE.Face3(face[0], face[1], face[2]);
-                      // var f = new THREE.Face3(0, 1, 2);
+                      var f = new THREE.Face3(parseInt(face[0]), parseInt(face[1]), parseInt(face[2]));
                       geometry.faces.push(f);
                    }
                    console.log('read over');

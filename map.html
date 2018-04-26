@@ -68,8 +68,8 @@
 				var material = new THREE.MeshBasicMaterial({color: 0xffffff});
 				var mesh = new THREE.Mesh(city_geomotry, material);
 				scene.add(mesh);
-				camera.position.set(6935, 64579, -300);
-				camera.lookAt(6935, 64579, 0);
+				camera.position.set(0, 0, 300);
+				camera.lookAt(0, 0, 0);
 
 
 				// var geometry = new THREE.Geometry();
@@ -109,15 +109,26 @@
 				// controls
 
 				var controls = new THREE.OrbitControls( camera, renderer.domElement );
-				// controls.minDistance = 200;
-				// controls.maxDistance = 500;
-				// controls.maxPolarAngle = Math.PI / 2;
+				controls.minDistance = 200;
+				controls.maxDistance = 500;
+				controls.maxPolarAngle = Math.PI / 2;
+
+				// controls = new THREE.TrackballControls( camera );
+				// controls.rotateSpeed = 1.0;
+				// controls.zoomSpeed = 1.2;
+				// controls.panSpeed = 0.8;
+				// controls.noZoom = false;
+				// controls.noPan = false;
+				// controls.staticMoving = true;
+				// controls.dynamicDampingFactor = 0.3;
+				// controls.keys = [ 65, 83, 68 ];
+				// controls.addEventListener( 'change', render );
 
 				scene.add( new THREE.AmbientLight( 0x222222 ) );
 				// light
 
-				var light = new THREE.PointLight( 0xffffff, 1 );
-				camera.add( light );
+				// var light = new THREE.PointLight( 0xffffff, 1 );
+				// camera.add( light );
 
 				// helper
 
@@ -185,6 +196,7 @@
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 
+				// controls.handleResize();
 				renderer.setSize( window.innerWidth, window.innerHeight );
 
 			}
@@ -192,6 +204,7 @@
 			function animate() {
 
 				requestAnimationFrame( animate );
+				// controls.update();
 
 				// group.rotation.y += 0.005;
 

@@ -21,40 +21,18 @@ function load_triangle_data(url)
                 if (request.status == 200 || request.status == 0)
                 {
                    var text = request.responseText;
-                   var lines = text.split('\n');
+                   // var lines = text.split('\n');
+                   var lines = text.split(/[\r\n]+/);
                    var size_line = lines[0].split(' ');
                    var point_size = size_line[0], idx_size = size_line[1];
                    console.log(point_size);
                    console.log(idx_size);
                    var i;
 
-                   // for(i = 1; i <= point_size; i++)
-                   // {
-                   //    // if(i>50)break;
-                   // 		var point = lines[i].split(' ');
-                   //    // if(i==point_size)
-                   //    // {
-                   //    //     console.log(point[0]);
-                   //    //     console.log(point[1]);
-                   //    //     console.log(point[2]);
-                   //    // }
-                   // 		var p = new THREE.Vector3(point[0], point[1], point[2]);
-                   // 		geometry.vertices.push(p);
-                   // }
-                   // for( ; i < lines.length; i++)
-                   // {
-                   //    // if(lines[i].length<1)continue;
-                   // 		var face = lines[i].split(' ');
-                   // 		var f = new THREE.Face3(face[0], face[1], face[2]);
-                   //    // console.log(face[0],face[1],face[2]);
-                   // 		geometry.faces.push(f);
-                   //    // break;
-                   // }
                    for(i = 1; i <= point_size; i++)
                    {
-                    // if(i>10)continue;
                       var point = lines[i].split(' ');
-                      var p = new THREE.Vector3(point[0], point[1], point[2]);
+                      var p = new THREE.Vector3(parseFloat(point[0])-5391, parseFloat(point[1])-61852.5, parseFloat(point[2]));
                       geometry.vertices.push(p);
                    }
                    for( ; i < lines.length; i++)

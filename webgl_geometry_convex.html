@@ -63,10 +63,26 @@
 
 				// controls
 
-				var controls = new THREE.OrbitControls( camera, renderer.domElement );
+				// var controls = new THREE.OrbitControls( camera, renderer.domElement );
 				// controls.minDistance = 200;
 				// controls.maxDistance = 500;
 				// controls.maxPolarAngle = Math.PI / 2;
+
+				controls = new THREE.TrackballControls( camera );
+
+				controls.rotateSpeed = 1.0;
+				controls.zoomSpeed = 1.2;
+				controls.panSpeed = 0.8;
+
+				controls.noZoom = false;
+				controls.noPan = false;
+
+				controls.staticMoving = true;
+				controls.dynamicDampingFactor = 0.3;
+
+				controls.keys = [ 65, 83, 68 ];
+
+				controls.addEventListener( 'change', render );
 
 				scene.add( new THREE.AmbientLight( 0x222222 ) );
 				// light
@@ -163,6 +179,7 @@
 
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
+				controls.handleResize();
 
 				renderer.setSize( window.innerWidth, window.innerHeight );
 
@@ -173,6 +190,7 @@
 				requestAnimationFrame( animate );
 
 				// group.rotation.y += 0.005;
+				controls.update();
 
 				render();
 

@@ -1,4 +1,9 @@
+#encoding=utf-8
 import numpy as np 
+
+'''
+将每个人的path中的每段路变成中点的二维坐标
+'''
 
 path_file = '../Data/agent_path/agent_road_0.txt'
 road_file = '../Data/road.txt'

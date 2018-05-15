@@ -1,0 +1,31 @@
+agent_pos_0.txt: 所有agent的轨迹信息。
+格式：
+agent_id n
+pos1
+pos2
+...
+posn
+
+agent_road_0.txt: 根据标准选出的所有agent的轨迹，轨迹由匹配好的道路编号组成。
+格式：
+agent_id
+road_id1 road_id2 ... road_idn
+
+agent_road_0_new.txt: 将agent_road_0.txt中的每个道路用中点坐标取整代替。
+格式：
+agent_id n
+road1_x road1_y
+road2_x road2_y
+...
+roadn_x roadn_y
+
+agent_road_0_formated.txt: 将agent_road_0_new.txt中的所有x排序，y排序，将坐标离散化。
+						   同时，将每个轨迹调整为同样长度，不足的在前面补0，超过的减掉前面的。
+格式：同上
+
+selected.txt: 根据某个标准选出的agent的id
+格式：
+id1
+id2
+...
+idn

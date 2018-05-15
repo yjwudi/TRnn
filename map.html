@@ -38,6 +38,7 @@
 		<script src="three-js/examples/js/Detector.js"></script>
 		<script src="three-js/examples/js/libs/stats.min.js"></script>
 		<script src="io.js"></script>
+		<script src="io1.js"></script>
 
 		<script>
 
@@ -51,6 +52,7 @@
 
 			function loadMap()
 			{
+				loadAgent();
 				loadRiver();
 				loadCity();
 				loadShelter();
@@ -70,6 +72,24 @@
 				// scene.add(mesh);
 				// camera.position.set(0, 0, -300);
 				// camera.lookAt(5100, 61000,0);
+			}
+
+			function loadAgent()
+			{
+				var agent_pos_array = load_agent_pos_data('Data/agent_path/agent_pos_0.txt');
+				console.log(agent_pos_array.length)
+				for(var i = 0; i < Math.min(100, agent_pos_array.length); i++)
+				{
+					var material = new THREE.LineBasicMaterial({color:0xff0000});
+				    var geometry = agent_pos_array[i];
+				    // console.log(geometry.vertices.length);
+				    // for(var j = 0; j < geometry.vertices.length; j++)
+				    // {
+				    // 	console.log(geometry.vertices[j]);
+				    // }
+				    var line = new THREE.Line(agent_pos_array[i], material);   
+				    scene.add(line);
+				}
 			}
 
 			function loadShelter()
@@ -118,9 +138,9 @@
 				// controls
 
 				var controls = new THREE.OrbitControls( camera, renderer.domElement );
-				controls.minDistance = 200;
-				controls.maxDistance = 5000;
-				controls.maxPolarAngle = Math.PI / 2;
+				controls.minDistance = 20;//控制滚轮放大画面最多能放大到多大
+				controls.maxDistance = 5000;//控制滚轮缩小画面最多能缩小到多小
+				controls.maxPolarAngle = Math.PI;//左键通过拖拽，上下旋转画面的角度，越大说明旋转的角度越大
 
 				// controls = new THREE.TrackballControls( camera );
 				// controls.rotateSpeed = 1.0;
@@ -147,6 +167,18 @@
 
 				var loader = new THREE.TextureLoader();
 				var texture = loader.load( '../three-js/examples/textures/sprites/disc.png' );
+
+				//定义线的基本材料，我们可以使用LineBasicMaterial（实线材料）和LineDashedMaterial（虚线材料）  
+			    var material = new THREE.LineBasicMaterial({color:0x0000ff});  
+			    //设置具有几何顶点的几何（Geometry）或缓冲区几何（BufferGeometry）设置顶点位置，看名字就知道了，一个是直接将数据保存在js里面的，另一个是保存在WebGL缓冲区内的，而且肯定保存到WebGL缓冲区内的效率更高  
+			    var geometry = new THREE.Geometry();  
+			    geometry.vertices.push(new THREE.Vector3(100,100,0));  
+			    geometry.vertices.push(new THREE.Vector3(0,100,0));  
+			    geometry.vertices.push(new THREE.Vector3(100,0,0));  
+			    //使用Line方法将线初始化  
+			    var line = new THREE.Line(geometry, material);  
+			    //将线添加到场景  
+			    scene.add(line);  
 
 				group = new THREE.Group();
 				scene.add( group );
@@ -180,7 +212,7 @@
 				var mesh = new THREE.Mesh( meshGeometry, meshMaterial );
 				mesh.material.side = THREE.BackSide; // back faces
 				mesh.renderOrder = 0;
-				group.add( mesh );
+				// group.add( mesh );
 
 				var meshMaterial2 = new THREE.MeshLambertMaterial( {
 					color: 0x0000f0,
@@ -191,7 +223,7 @@
 				var mesh = new THREE.Mesh( meshGeometry, meshMaterial2);
 				mesh.material.side = THREE.FrontSide; // front faces
 				mesh.renderOrder = 1;
-				group.add( mesh );
+				// group.add( mesh );
 
 				//
 

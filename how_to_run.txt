@@ -1,2 +1,5 @@
 python -m SimpleHTTPServer
 python3 -m http.server
+
+threejs空间的z轴是指向屏幕的
+目前右键只能左右移动地图，不能上下移动地图

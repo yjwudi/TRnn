@@ -1,3 +1,6 @@
+/*
+读入面片数据
+*/
 function load_triangle_data(url)
 {
 	console.log(url);
@@ -52,7 +55,9 @@ function load_triangle_data(url)
     }
     
     // return geometry;
-}
+};
+
+
 
 
 

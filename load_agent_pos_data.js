@@ -1,7 +1,7 @@
 /*
 读入所有agent的pos数据
 */
-function load_agent_pos_data(url)
+function load_agent_pos_data(url, id_array)
 {
   console.log(url);
   var request=null;
@@ -31,16 +31,18 @@ function load_agent_pos_data(url)
                    {
                     var head_line = lines[i].split(' ');
                     var agent_id = parseInt(head_line[0]), sz = parseInt(head_line[1]);
-                    var geometry = new THREE.Geometry();
-                    for(var j = i+1; j < i+1+sz; j++)
+                    var idx = id_array.indexOf(agent_id);
+                    if(idx>=0)
                     {
-                      var pos_line = lines[j].split(' ');
-                      var p = new THREE.Vector3(parseFloat(pos_line[0])-5391, parseFloat(pos_line[1])-61852.5, parseFloat(pos_line[2]));
-                      geometry.vertices.push(p);
+                      var geometry = new THREE.Geometry();
+                      for(var j = i+1; j < i+1+sz; j++)
+                      {
+                        var pos_line = lines[j].split(' ');
+                        var p = new THREE.Vector3(parseFloat(pos_line[0])-5391, parseFloat(pos_line[1])-61852.5, parseFloat(pos_line[2]));
+                        geometry.vertices.push(p);
+                      }
+                      ans[idx] = geometry;
                     }
-                    ans[agent_id] = geometry;
-                    if(agent_id>10000)
-                      break;
                     i = i+sz+1;
                    }
                    console.log('read over');

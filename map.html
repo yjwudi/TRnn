@@ -38,7 +38,8 @@
 		<script src="three-js/examples/js/Detector.js"></script>
 		<script src="three-js/examples/js/libs/stats.min.js"></script>
 		<script src="io.js"></script>
-		<script src="io1.js"></script>
+		<script src="load_agent_pos_data.js"></script>
+		<script src="load_single_data.js"></script>
 
 		<script>
 
@@ -53,9 +54,9 @@
 			function loadMap()
 			{
 				loadAgent();
-				loadRiver();
-				loadCity();
-				loadShelter();
+				// loadRiver();
+				// loadCity();
+				// loadShelter();
 				
 				camera.position.set(0, 0, 3000);
 				camera.lookAt(0, 0, 0);
@@ -76,11 +77,39 @@
 
 			function loadAgent()
 			{
-				var agent_pos_array = load_agent_pos_data('Data/agent_path/agent_pos_0.txt');
-				console.log(agent_pos_array.length)
-				for(var i = 0; i < Math.min(100, agent_pos_array.length); i++)
+				var id_array = load_single_data('Data/agent_path/selected.txt');
+				console.log(id_array.length);
+				var cluster_id_array = load_single_data('Data/agent_path/selected_cluster_total.txt');
+				console.log(cluster_id_array.length);
+				var agent_pos_array = load_agent_pos_data('Data/agent_path/agent_pos_0.txt', id_array);
+				console.log(agent_pos_array.length);
+
+				for(var i = 0; i < agent_pos_array.length; i++)
 				{
 					var material = new THREE.LineBasicMaterial({color:0xff0000});
+					var cluster_idx = cluster_id_array[i];
+					if(cluster_idx!=5)continue;
+					switch(cluster_idx)
+					{
+					case 0:
+						material = new THREE.LineBasicMaterial({color:0xf00000});
+						break;
+					case 1:
+						material = new THREE.LineBasicMaterial({color:0xffffff});
+						break;
+					case 2:
+						material = new THREE.LineBasicMaterial({color:0x00f000});
+						break;
+					case 3:
+						material = new THREE.LineBasicMaterial({color:0x000f00});
+						break;
+					case 4:
+						material = new THREE.LineBasicMaterial({color:0x0000f0});
+						break;
+					case 5:
+						material = new THREE.LineBasicMaterial({color:0x00000f});
+						break;
+					}
 				    var geometry = agent_pos_array[i];
 				    // console.log(geometry.vertices.length);
 				    // for(var j = 0; j < geometry.vertices.length; j++)

@@ -16,9 +16,10 @@ feature_0 = feature_arr[0:len(feature_arr):2]
 feature_1 = feature_arr[1:len(feature_arr):2]
 feature_total = np.concatenate((feature_0,feature_1),axis=1)
 
-kmeans_0 = KMeans(n_clusters=6, random_state=0).fit(feature_0)
-kmeans_1 = KMeans(n_clusters=6, random_state=0).fit(feature_1)
-kmeans_total = KMeans(n_clusters=6, random_state=0).fit(feature_total)
+cluster_num = 2
+kmeans_0 = KMeans(n_clusters=cluster_num, random_state=0).fit(feature_0)
+kmeans_1 = KMeans(n_clusters=cluster_num, random_state=0).fit(feature_1)
+kmeans_total = KMeans(n_clusters=cluster_num, random_state=0).fit(feature_total)
 
 
 np.savetxt('../Data/agent_path/selected_cluster_0.txt', kmeans_0.labels_, fmt='%d')

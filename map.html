@@ -79,16 +79,17 @@
 			{
 				var id_array = load_single_data('Data/agent_path/selected.txt');
 				console.log(id_array.length);
-				var cluster_id_array = load_single_data('Data/agent_path/selected_cluster_total.txt');
+				var cluster_id_array = load_single_data('Data/agent_path/selected_cluster_0.txt');
 				console.log(cluster_id_array.length);
 				var agent_pos_array = load_agent_pos_data('Data/agent_path/agent_pos_0.txt', id_array);
 				console.log(agent_pos_array.length);
-
+				var sum = 0;
 				for(var i = 0; i < agent_pos_array.length; i++)
 				{
 					var material = new THREE.LineBasicMaterial({color:0xff0000});
 					var cluster_idx = cluster_id_array[i];
-					if(cluster_idx!=5)continue;
+					if(cluster_idx!=0)continue;
+					sum += 1;
 					switch(cluster_idx)
 					{
 					case 0:
@@ -111,6 +112,9 @@
 						break;
 					}
 				    var geometry = agent_pos_array[i];
+				    var point = geometry.vertices[geometry.vertices.length-1];
+				    // if(point.y>2000)continue;
+				    // console.log(point.y);
 				    // console.log(geometry.vertices.length);
 				    // for(var j = 0; j < geometry.vertices.length; j++)
 				    // {
@@ -119,6 +123,7 @@
 				    var line = new THREE.Line(agent_pos_array[i], material);   
 				    scene.add(line);
 				}
+				console.log(sum);
 			}
 
 			function loadShelter()
@@ -207,7 +212,7 @@
 			    //使用Line方法将线初始化  
 			    var line = new THREE.Line(geometry, material);  
 			    //将线添加到场景  
-			    scene.add(line);  
+			    // scene.add(line);  
 
 				group = new THREE.Group();
 				scene.add( group );

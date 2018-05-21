@@ -41,7 +41,7 @@ function load_agent_pos_data(url, id_array)
                         var p = new THREE.Vector3(parseFloat(pos_line[0])-5391, parseFloat(pos_line[1])-61852.5, parseFloat(pos_line[2]));
                         geometry.vertices.push(p);
                       }
-                      ans[idx] = geometry;
+                      ans[ans.length] = geometry;
                     }
                     i = i+sz+1;
                    }

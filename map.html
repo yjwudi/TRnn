@@ -4,32 +4,6 @@
 		<title>three.js webgl - convex geometry</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<style>
-			body {
-				font-family: Monospace;
-				background-color: #000;
-				margin: 0px;
-				overflow: hidden;
-			}
-			#info {
-				position: absolute;
-				color: #fff;
-				top: 0px;
-				width: 100%;
-				padding: 5px;
-				text-align:center;
-			}
-			a {
-				color: #fff;
-			}
-		</style>
-	</head>
-	<body>
-
-		<div id="info">
-			<input type="button" value="make" onclick="loadMap('test.txt');"/>
-		</div>
-
 		<script src="three-js/build/three.js"></script>
 		<script src="three-js/examples/js/controls/OrbitControls.js"></script>
 		<script src="three-js/examples/js/controls/TrackballControls.js"></script>
@@ -40,16 +14,20 @@
 		<script src="io.js"></script>
 		<script src="load_agent_pos_data.js"></script>
 		<script src="load_single_data.js"></script>
-
 		<script>
 
 			if ( ! Detector.webgl )
 				Detector.addGetWebGLMessage();
 
-			var group, camera, scene, renderer;
+			var group, camera, scene, renderer, cluster_id_array;
+			var agent_pos_array = new Array();
+			var agent_line_array = new Array();
 
-			init();
-			animate();
+			function threeStart()
+			{
+				init();
+				animate();
+			}
 
 			function loadMap()
 			{
@@ -58,30 +36,16 @@
 				loadCity();
 				loadShelter();
 				
-				camera.position.set(0, 1700, 1000);
+				camera.position.set(0, 1700, 1500);
 				camera.lookAt(0, 1700, 0);
-
-				// var geometry = new THREE.Geometry();
-				// geometry.vertices.push(
-				//     new THREE.Vector3(10200,  64500, 0),
-				//     new THREE.Vector3(10200, 0, 0),
-				//     new THREE.Vector3(0, 0, 0)
-				// );
-				// geometry.faces.push(new THREE.Face3( 0, 1, 2 ));
-				// var material = new THREE.MeshBasicMaterial({color: 0xffffff});
-				// var mesh = new THREE.Mesh(geometry, material);
-				// scene.add(mesh);
-				// camera.position.set(0, 0, -300);
-				// camera.lookAt(5100, 61000,0);
 			}
 
 			function loadAgent()
 			{
 				var id_array = load_single_data('Data/agent_path/selected.txt');
 				console.log(id_array.length);
-				var cluster_id_array = load_single_data('Data/agent_path/selected_cluster_1.txt');
+				cluster_id_array = load_single_data('Data/agent_path/selected_cluster_1.txt');
 				console.log(cluster_id_array.length);
-				var agent_pos_array = new Array();
 				for(var base = 0; base < 15; base++)
 				{
 					var tmp_id_array = new Array();
@@ -102,38 +66,61 @@
 					agent_pos_array = agent_pos_array.concat(tmp_agent_pos_array); 
 				}
 				console.log(agent_pos_array.length);
-				var sum = 0;
-				var real_sum = 0;
 				for(var i = 0; i < agent_pos_array.length; i++)
 				{
 					var material = new THREE.LineBasicMaterial({color:0xff0000});
 					var cluster_idx = cluster_id_array[i];
-					if(cluster_idx!=3)continue;
-					sum += 1;
+					// if(cluster_idx!=3)continue;
 					switch(cluster_idx)
 					{
 					case 0:
-						material = new THREE.LineBasicMaterial({color:0xf00000});
+						material = new THREE.LineBasicMaterial({color:0xff0000});
 						break;
 					case 1:
-						material = new THREE.LineBasicMaterial({color:0xffffff});
+						material = new THREE.LineBasicMaterial({color:0x00ff00});
 						break;
 					case 2:
-						material = new THREE.LineBasicMaterial({color:0x00f000});
+						material = new THREE.LineBasicMaterial({color:0x0000ff});
 						break;
 					case 3:
-						material = new THREE.LineBasicMaterial({color:0xffffff});
+						material = new THREE.LineBasicMaterial({color:0x836fff});
 						break;
 					case 4:
-						material = new THREE.LineBasicMaterial({color:0x0000f0});
+						material = new THREE.LineBasicMaterial({color:0x8b008b});
 						break;
 					case 5:
-						material = new THREE.LineBasicMaterial({color:0x00000f});
+						material = new THREE.LineBasicMaterial({color:0xff6a6a});
 						break;
 					}
 				    var geometry = agent_pos_array[i];
 				    var point = geometry.vertices[geometry.vertices.length-1];
-				    if(point.y>=1890)continue;
+				    // if(point.y>=1890)continue;
+				    // console.log(point.y);
+				    // console.log(geometry.vertices.length);
+				    // for(var j = 0; j < geometry.vertices.length; j++)
+				    // {
+				    // 	console.log(geometry.vertices[j]);
+				    // }
+				    var line = new THREE.Line(agent_pos_array[i], material);
+				    agent_line_array[i] = line;
+				    scene.add(line);
+				}
+			}
+
+			function showAgent()
+			{
+				var sum = 0, real_sum = 0;
+				var cluster_id = document.getElementById("cluster_id").value;
+				console.log(cluster_id);
+				for(var i = 0; i < agent_pos_array.length; i++)
+				{
+					var material = new THREE.LineBasicMaterial({color:0xffffff});
+					var idx = cluster_id_array[i];
+					scene.remove(agent_line_array[i]);
+					if(idx!=cluster_id)continue;
+					sum += 1;
+				    var geometry = agent_pos_array[i];
+				    var point = geometry.vertices[geometry.vertices.length-1];
 				    real_sum++;
 				    // console.log(point.y);
 				    // console.log(geometry.vertices.length);
@@ -141,7 +128,8 @@
 				    // {
 				    // 	console.log(geometry.vertices[j]);
 				    // }
-				    var line = new THREE.Line(agent_pos_array[i], material);   
+				    var line = new THREE.Line(agent_pos_array[i], material);
+				    agent_line_array[i] = line;
 				    scene.add(line);
 				}
 				console.log('sum=',sum);
@@ -159,7 +147,7 @@
 			function loadCity()
 			{
 				var city_geomotry = load_triangle_data('Data/city.txt');
-				var material = new THREE.MeshBasicMaterial({color: 0xdcdcdc});
+				var material = new THREE.MeshBasicMaterial({color: 0x4a708b});
 				var mesh = new THREE.Mesh(city_geomotry, material);
 				scene.add(mesh);
 			}
@@ -177,14 +165,19 @@
 
 				scene = new THREE.Scene();
 
+				width = document.getElementById('canvas3d').clientWidth;
+				height = document.getElementById('canvas3d').clientHeight;
+
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				document.body.appendChild( renderer.domElement );
+				renderer.setSize( width, height );
+				// renderer.setClearColor('rgb(135,206,250)',1.0);  
+				// renderer.setClearColor(0xff0000,1.0);
+				document.getElementById('canvas3d').appendChild( renderer.domElement );
 
 				// camera
 
-				camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.innerHeight, 1, 100000 );
+				camera = new THREE.PerspectiveCamera( 80, width / height, 1, 100000 );
 				// camera.position.set( 15, 20, 30 );
 				// camera.lookAt(0,0,0);
 				camera.position.set(0, 0, -300);
@@ -289,12 +282,14 @@
 
 
 			function onWindowResize() {
+				width = document.getElementById('canvas3d').clientWidth;
+				height = document.getElementById('canvas3d').clientHeight;
 
-				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.aspect = width / height;
 				camera.updateProjectionMatrix();
 
 				// controls.handleResize();
-				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setSize( width, height );
 
 			}
 
@@ -317,6 +312,57 @@
 
 
 		</script>
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+			#info {
+				position: absolute;
+				color: #fff;
+				top: 0px;
+				width: 100%;
+				padding: 5px;
+				text-align:center;
+			}
+			#canvas3d {
+				border: none;
+	            cursor: move;
+	            width: 1400px;
+	            height: 800px;
+	            background-color: #EEEEEE;
+			}
+			a {
+				color: #fff;
+			}
+		</style>
+<!-- 		<style type="text/css">
+            div#canvas3d{
+                  border: none;
+                  cursor: move;
+                  width: 1400px;
+                  height: 800px;
+                  background-color: #EEEEEE;
+                }
+        </style> -->
+
+	</head>
+	<body onload='threeStart();'>
+
+		<div id="info">
+			<span style="padding-left:70%">
+				<input type="button" value="make" onclick="loadMap();"/>
+				<input type="text" id="" />
+				<input type="text" id="cluster_id" />
+				<input type="button" value="show" onclick="showAgent();"/>
+			</span>
+		</div>
+		<div id="canvas3d"></div>
+
+		
+		
 
 	</body>
 </html>

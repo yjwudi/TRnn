@@ -107,11 +107,12 @@
 				}
 			}
 
-			function showAgent()
+			function showAgent(flag)
 			{
 				var sum = 0, real_sum = 0;
 				var cluster_id = document.getElementById("cluster_id").value;
-				console.log(cluster_id);
+				var y_limit = document.getElementById("y_limit").value;
+				console.log('y_limit=',y_limit);
 				for(var i = 0; i < agent_pos_array.length; i++)
 				{
 					var material = new THREE.LineBasicMaterial({color:0xffffff});
@@ -121,6 +122,16 @@
 					sum += 1;
 				    var geometry = agent_pos_array[i];
 				    var point = geometry.vertices[geometry.vertices.length-1];
+					if(flag==true)
+					{
+						console.log(flag);
+						if(point.y>=y_limit)continue;
+					}
+					else
+					{
+						console.log(flag);
+						if(point.y<=y_limit)continue;
+					}
 				    real_sum++;
 				    // console.log(point.y);
 				    // console.log(geometry.vertices.length);
@@ -354,9 +365,10 @@
 		<div id="info">
 			<span style="padding-left:70%">
 				<input type="button" value="make" onclick="loadMap();"/>
-				<input type="text" id="" />
-				<input type="text" id="cluster_id" />
-				<input type="button" value="show" onclick="showAgent();"/>
+				<input type="text" id="y_limit" size="10" />
+				<input type="text" id="cluster_id" size="10" />
+				<input type="button" value="show_lower" onclick="showAgent(true);"/>
+				<input type="button" value="show_upper" onclick="showAgent(false);"/>
 			</span>
 		</div>
 		<div id="canvas3d"></div>

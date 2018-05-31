@@ -16,6 +16,8 @@ with open(id_file, 'r') as f:
 	selected_id = list(map(int, data))
 print('selected_id[0]=',selected_id[0])
 
+max_x = 8981.0
+max_y = 4966.0
 agent_path = []
 with open(agent_file, 'r') as f:
 	data = f.readlines()
@@ -31,7 +33,9 @@ with open(agent_file, 'r') as f:
 			my_path = []
 			for j in range(i, i+line_num):
 				pos = data[j].split()
-				pos = list(map(int, pos))
+				pos = list(map(float, pos))
+				pos[0] = pos[0]/max_x
+				pos[1] = pos[1]/max_y
 				my_path.append(pos)
 			agent_path.append(my_path)
 		i = i+line_num
@@ -48,12 +52,13 @@ from default import *
 # Constants
 # hidden_num : the number of hidden units in each RNN-cell
 batch_num = 128
-hidden_num = 12
+hidden_num = 64
 iteration = 1000000
 step_num = 120
 
 x = np.array(agent_path)
 print('x shape: ', np.shape(x))
+# print(x[0])
 
 # placeholder list
 p_input = tf.placeholder(tf.float32, shape=(batch_num, step_num, elem_num))
@@ -73,7 +78,7 @@ def get_test_batch():
 		batch_np = x[batch_sum-batch_num:batch_sum]
 	return batch_np
 
-log_dir = 'logs_bkup/lstm-parameter'
+log_dir = 'test_hidden_num_64_norm/logs_bkup_260w/lstm-parameter-hidden_num-64'
 restore_flag = True
 results = []
 gpu_options = tf.GPUOptions(allow_growth=True)

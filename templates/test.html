@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<body>
+<p>
+	Hello, <span id="username">
+	</span>
+</p>
+<script>
+    var user = JSON.parse('{{ user | tojson | safe}}');
+    var test = user.firstname;
+    test[4] = test[1]+test[0];
+    console.log(test, test.length);
+    document.getElementById('username').innerHTML = user.firstname + " " +
+            user.lastname;
+</script>
+</body>
+
+</html>

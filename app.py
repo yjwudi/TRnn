@@ -9,9 +9,12 @@ city_file = 'Data/city.dat'
 citymat_file = 'Data/city_grid.txt'
 shelter_file = 'Data/shelter.dat'
 building_file = 'Data/building.txt'
+selected_id_file = 'Data/agent_path/selected.txt'
+selected_cluster_file = 'Data/agent_path/selected_cluster_1.txt'
 
 x_move = 5391
 y_move = 61852.5
+traj_map = {} #traj_map[idx] = [[x1,y1,z1],[x2,y2,z2]...]
 
 def read_triangle_file(fname):
 	vertices = []
@@ -57,6 +60,34 @@ def read_triangle_file_bin(fname):
 			faces.append(face)
 	return vertices, faces
 
+def read_single_file(fname):
+	arr = []
+	with open(fname, 'r') as f:
+		data = f.readlines()
+		for _ in data:
+			arr.append(int(_))
+	return arr
+
+def read_traj_file(fname):
+	with open(fname, 'r') as f:
+		head = f.readline()
+		while head:
+			head = head.split()
+			idx = int(head[0])
+			cnt = int(head[1])
+			traj = []
+			for i in range(cnt):
+				co = f.readline()
+				co = co.split()
+				co = list(map(float, co))
+				co[0] -= x_move
+				co[1] -= y_move
+				traj.append(co)
+			traj_map[idx] = traj
+			head = f.readline()
+
+
+
 @app.route('/')
 def hello_world():
 
@@ -83,7 +114,20 @@ def hello_world():
     vertices2, faces2 = read_triangle_file_bin(shelter_file)
     city_map['shelter_vertices'] = vertices2
     city_map['shelter_faces'] = faces2
+
+    for base in range(15):
+    	fname = 'Data/agent_path/agent_pos_0/agent_'+str(base)+'.txt'
+    	read_traj_file(fname)
+    selected_id = read_single_file(selected_id_file)
+    selected_cluster_id = read_single_file(selected_cluster_file)
+    selected_traj = []
+    for idx in selected_id:
+    	selected_traj.append(traj_map[idx])
+    city_map['selected_traj'] = selected_traj
+    city_map['selected_cluster_id'] = selected_cluster_id
+
+
     return render_template("index.html", geo=city_map)
 
 if __name__ == '__main__':
-	app.run()
+	app.run(debug=True)

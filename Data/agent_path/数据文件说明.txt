@@ -19,7 +19,7 @@ road2_x road2_y
 ...
 roadn_x roadn_y
 
-agent_road_0_formated.txt: 将agent_road_0_new.txt中的所有x排序，y排序，将坐标离散化。
+agent_road_0_new_formated.txt: 将agent_road_0_new.txt中的所有x排序，y排序，将坐标离散化。
 						   同时，将每个轨迹调整为同样长度，不足的在前面补0，超过的减掉前面的。
 格式：同上
 

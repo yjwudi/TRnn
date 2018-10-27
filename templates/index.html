@@ -16,16 +16,19 @@
 			if ( ! Detector.webgl )
 				Detector.addGetWebGLMessage();
 
-			var map_data;
+			var map_data, cluster_sum;
 			var group, camera, scene, renderer, controls;
 			var agent_pos_array = new Array();
 			var agent_line_array = new Array();
 
 			function threeStart()
 			{
+				map_data = JSON.parse('{{ geo | tojson | safe}}');
+				cluster_sum = 4;
 				init();
 				animate();
 				loadAgent();
+				// loadRoad();
 			}
 
 			function init()
@@ -76,8 +79,6 @@
 
 				var light = new THREE.PointLight( 0xffffff, 1 );
 				camera.add( light );
-
-				map_data = JSON.parse('{{ geo | tojson | safe}}');
 
 				var river_vertices = map_data.river_vertices;
 				var river_faces = map_data.river_faces;
@@ -156,6 +157,21 @@
 				scene.add(shelter_mesh);
 				console.log('shelter added');
 
+				// var road_vertices = map_data.road_vertices;
+				// var road_lines = map_data.road_lines;
+				// for(var i = 0; i < road_lines.length; i++)
+				// {
+				// 	var line = road_lines[i];
+				// 	var idx1 = parseInt(line[0]), idx2 = parseInt(line[1]);
+				// 	var p1 = road_vertices[idx1], p2 = road_vertices[idx2];
+				// 	var material = new THREE.LineBasicMaterial({color:0xffffff});  
+				//     var geometry = new THREE.Geometry();  
+				//     geometry.vertices.push(new THREE.Vector3(parseFloat(p1[0]),parseFloat(p1[1]),parseFloat(p1[2])));  
+				//     geometry.vertices.push(new THREE.Vector3(parseFloat(p2[0]),parseFloat(p2[1]),parseFloat(p2[2])));
+				//     scene.add(new THREE.Line(geometry, material));
+				// }
+				// console.log('road added');
+
 
 				camera.position.set(0, 1700, 3000);
 				camera.lookAt(0, 1700, 0);
@@ -164,16 +180,75 @@
 
 			}
 
+			function loadRoad()
+			{
+				//每个类可视化的道路数量
+				var road_sum = 600;
+				var cluster_road_array = map_data.cluster_road_dict;
+				console.log("load high probability road");
+
+				var road_vertices = map_data.road_vertices;
+				var road_lines = map_data.road_lines;
+				for(var i = 0; i < cluster_sum; i++)
+				{
+					var sum = 0;
+					for(var j = 0; j < cluster_road_array[i].length; j++)
+					{
+						var line = road_lines[parseInt(cluster_road_array[i][j][0])];
+						var prob = parseFloat(cluster_road_array[i][j][1]);
+						if(prob<0.0001)
+							break;
+						var idx1 = parseInt(line[0]), idx2 = parseInt(line[1]);
+						var p1 = road_vertices[idx1], p2 = road_vertices[idx2];
+						var material = new THREE.LineBasicMaterial({color:0xffffff});
+						switch(i)
+						{
+						case 0:
+							material = new THREE.LineBasicMaterial({color:0xff0000});
+							break;
+						case 1:
+							material = new THREE.LineBasicMaterial({color:0x00ff00});
+							break;
+						case 2:
+							material = new THREE.LineBasicMaterial({color:0x0000ff});
+							break;
+						case 3:
+							material = new THREE.LineBasicMaterial({color:0x836fff});
+							break;
+						case 4:
+							material = new THREE.LineBasicMaterial({color:0x8b008b});
+							break;
+						case 5:
+							material = new THREE.LineBasicMaterial({color:0xff6a6a});
+							break;
+						}
+					    var geometry = new THREE.Geometry();  
+					    geometry.vertices.push(new THREE.Vector3(parseFloat(p1[0]),parseFloat(p1[1]),parseFloat(p1[2])));  
+					    geometry.vertices.push(new THREE.Vector3(parseFloat(p2[0]),parseFloat(p2[1]),parseFloat(p2[2])));
+					    scene.add(new THREE.Line(geometry, material));
+					    sum += 1;
+						if(sum > road_sum)
+							break;
+					}
+				}
+			}
+
 			function loadAgent() {
 				var agent_pos_array = map_data.selected_traj;
 				var cluster_id_array = map_data.selected_cluster_id;
-				console.log(cluster_id_array.length);
+				// console.log(cluster_id_array);
 				for(var i = 0; i < agent_pos_array.length; i++)
 				{
 					var material = new THREE.LineBasicMaterial({color:0xff0000});
 					var cluster_idx = parseInt(cluster_id_array[i]);
+					if(cluster_idx==2)
+						continue;
+					// console.log('he');
 					switch(cluster_idx)
 					{
+					case -1:
+						material = new THREE.LineBasicMaterial({color:0xffffff});
+						break;
 					case 0:
 						material = new THREE.LineBasicMaterial({color:0xff0000});
 						break;
@@ -199,30 +274,18 @@
 				    	var p = new THREE.Vector3(parseFloat(agent_pos_array[i][j][0]), parseFloat(agent_pos_array[i][j][1]), parseFloat(agent_pos_array[i][j][2]));
 				    	geometry.vertices.push(p);
 				    }
-				    // var point = geometry.vertices[geometry.vertices.length-1];
-				    // if(point.y>=1890)continue;
+				    var point = geometry.vertices[geometry.vertices.length-1];
+				    if(point.y>=1890)continue;
 				    // console.log(point.y);
 				    // console.log(geometry.vertices.length);
-				    // for(var j = 0; j < geometry.vertices.length; j++)
-				    // {
-				    // 	console.log(geometry.vertices[j]);
-				    // }
+				    for(var j = 0; j < geometry.vertices.length; j++)
+				    {
+				    	console.log(geometry.vertices[j]);
+				    }
 				    var line = new THREE.Line(geometry, material);
 				    agent_line_array[i] = line;
-				    console.log('add');
 				    scene.add(line);
 				}
-				//定义线的基本材料，我们可以使用LineBasicMaterial（实线材料）和LineDashedMaterial（虚线材料）  
-			    var material = new THREE.LineBasicMaterial({color:0x0000ff});  
-			    //设置具有几何顶点的几何（Geometry）或缓冲区几何（BufferGeometry）设置顶点位置，看名字就知道了，一个是直接将数据保存在js里面的，另一个是保存在WebGL缓冲区内的，而且肯定保存到WebGL缓冲区内的效率更高  
-			    var geometry = new THREE.Geometry();  
-			    geometry.vertices.push(new THREE.Vector3(100,100,0));  
-			    geometry.vertices.push(new THREE.Vector3(0,100,0));  
-			    geometry.vertices.push(new THREE.Vector3(100,0,0));  
-			    //使用Line方法将线初始化  
-			    var line = new THREE.Line(geometry, material);  
-			    //将线添加到场景  
-			    scene.add(line); 
 			}
 
 

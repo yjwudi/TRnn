@@ -2,10 +2,13 @@
 import numpy as np
 '''
 得到选取的轨迹的每段路，计算每段路在不同主题下的概率
-road_dict是一个字典，key是道路中点字符串，value是一个数组，每个位置时道路在这个类的概率
-cluster_road_dict是一个list，每个位置是某个类对应的dict，key是道路中点字符串，value是这个道路在这类的概率
+road_dict是一个字典，key是道路编号，value是一个数组，每个位置时道路在这个类的概率
+cluster_road_dict是一个list，每个位置是某个类对应的dict，key是道路编号，value是这个道路在这类的概率
 '''
-agent_file = '../Data/agent_path/agent_road_0_new_formated.txt'
+# agent_file = 'Data/agent_path/agent_road_0.txt'
+# id_file = 'Data/agent_path/selected.txt'
+# cluster_file = 'Data/agent_path/selected_cluster_1.txt'
+agent_file = '../Data/agent_path/agent_road_0.txt'
 id_file = '../Data/agent_path/selected.txt'
 cluster_file = '../Data/agent_path/selected_cluster_1.txt'
 
@@ -26,35 +29,16 @@ def road_topic_prob():
 	agent_path = dict()
 	road_sum = 0
 	repeat_sum = 0
-	with open(agent_file, 'r') as f:
+	with open(agent_file,"r") as f:
 		data = f.readlines()
-		i = 0
-		while True:
-			if i >= len(data):
-				break
-			head_line = data[i].split()
-			i += 1
-			agent_id = int(head_line[0])
-			line_num = int(head_line[1])
-			if agent_id in selected_id:
-				my_path = []
-				for j in range(i, i+line_num):
-					pos = data[j].split()
-					pos = list(map(float, pos))
-					if pos[0]+pos[1]<1:
-						continue
-					# pos[0] = pos[0]/max_x
-					# pos[1] = pos[1]/max_y
-					# if data[j] not in road_dict:# data[j]是从文件中读出的字符串
-					# 	road_dict[data[j]] = len(road_dict)
-					# else:
-					# 	repeat_sum += 1
-					my_path.append(data[j])
-				agent_path[agent_id] = my_path
-			i = i+line_num
+		for i in range(0,len(data),2):
+			idx = int(data[i])
+			path = map(int,data[i+1].split())
+			agent_path[idx] = path
+
 	for i in range(len(selected_id)):
 		cluster_idx = int(selected_clusterid[i])
-		pre_road = ''
+		pre_road = 0
 		for road in agent_path[selected_id[i]]:
 			if road==pre_road:
 				continue
@@ -82,7 +66,8 @@ def road_topic_prob():
 		# 	print(road_dict[key])
 	for i in range(cluster_num):
 		cluster_road_dict[i] = sorted(cluster_road_dict[i].items(), key=lambda item:item[1], reverse=True)
-	print(cluster_road_dict[1])
+	print(cluster_road_dict[2])
+	print(cluster_road_dict[3])
 	return road_dict, cluster_road_dict
 
 

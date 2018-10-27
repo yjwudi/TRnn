@@ -1,6 +1,7 @@
 import struct
 from flask import Flask, render_template
 import numpy as np
+from pyutils.road_topic_probability_v2 import road_topic_prob
 
 app = Flask(__name__)
 
@@ -9,6 +10,8 @@ city_file = 'Data/city.dat'
 citymat_file = 'Data/city_grid.txt'
 shelter_file = 'Data/shelter.dat'
 building_file = 'Data/building.txt'
+road_file = 'Data/road.dat'
+# road_file = 'Data/main_road.dat'
 selected_id_file = 'Data/agent_path/selected.txt'
 selected_cluster_file = 'Data/agent_path/selected_cluster_1.txt'
 
@@ -59,6 +62,26 @@ def read_triangle_file_bin(fname):
 			face = [x, y, z]
 			faces.append(face)
 	return vertices, faces
+def read_line_file_bin(fname):
+	vertices = []
+	faces = []
+	with open(fname, 'rb') as f:
+		# data = f.read(4)
+		point_num = struct.unpack('i', f.read(4))[0]
+		tri_num = struct.unpack('i', f.read(4))[0]
+
+		for i in range(1, point_num+1):
+			x = struct.unpack('f', f.read(4))[0]-x_move
+			y = struct.unpack('f', f.read(4))[0]-y_move
+			z = struct.unpack('f', f.read(4))[0]
+			pos = [x, y, z]
+			vertices.append(pos)
+		for i in range(point_num+1, point_num+1+tri_num):
+			x = struct.unpack('i', f.read(4))[0]
+			y = struct.unpack('i', f.read(4))[0]
+			face = [x, y]
+			faces.append(face)
+	return vertices, faces
 
 def read_single_file(fname):
 	arr = []
@@ -86,12 +109,10 @@ def read_traj_file(fname):
 			traj_map[idx] = traj
 			head = f.readline()
 
+city_map = {}
 
-
-@app.route('/')
-def hello_world():
-
-    city_map = {}
+def load_data():
+	
     vertices, faces = read_triangle_file_bin(river_file)
     city_map['river_vertices'] = vertices
     city_map['river_faces'] = faces
@@ -115,19 +136,30 @@ def hello_world():
     city_map['shelter_vertices'] = vertices2
     city_map['shelter_faces'] = faces2
 
+    vertices3, faces3 = read_line_file_bin(road_file)
+    city_map['road_vertices'] = vertices3
+    city_map['road_lines'] = faces3
+
     for base in range(15):
     	fname = 'Data/agent_path/agent_pos_0/agent_'+str(base)+'.txt'
     	read_traj_file(fname)
     selected_id = read_single_file(selected_id_file)
-    selected_cluster_id = read_single_file(selected_cluster_file)
     selected_traj = []
     for idx in selected_id:
     	selected_traj.append(traj_map[idx])
     city_map['selected_traj'] = selected_traj
+
+    selected_cluster_id = read_single_file(selected_cluster_file)
     city_map['selected_cluster_id'] = selected_cluster_id
 
+    road_dict, cluster_road_dict = road_topic_prob()
+    city_map['cluster_road_dict'] = cluster_road_dict
+
+@app.route('/')
+def hello_world():
 
     return render_template("index.html", geo=city_map)
 
 if __name__ == '__main__':
+	load_data()
 	app.run(debug=True)

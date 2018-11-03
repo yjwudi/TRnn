@@ -2,8 +2,10 @@ import struct
 from flask import Flask, render_template
 import numpy as np
 from pyutils.road_topic_probability_v2 import road_topic_prob
+from datetime import timedelta
 
 app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT']=timedelta(seconds=1)
 
 river_file = 'Data/river.dat'
 city_file = 'Data/city.dat'
@@ -154,6 +156,18 @@ def load_data():
 
     road_dict, cluster_road_dict = road_topic_prob()
     city_map['cluster_road_dict'] = cluster_road_dict
+    
+@app.context_processor
+def override_url_for():
+    return dict(url_for=dated_url_for)
+ 
+def dated_url_for(endpoint, **values):
+    if endpoint == 'static':
+        filename = values.get('filename', None)
+    if filename:
+        file_path = os.path.join(app.root_path, endpoint, filename)
+        values['q'] = int(os.stat(file_path).st_mtime)
+        return url_for(endpoint, **values)
 
 @app.route('/')
 def hello_world():

@@ -1,4 +1,5 @@
 # Basic libraries
+from __future__ import unicode_literals, print_function, division
 import numpy as np
 from default import *
 
@@ -15,6 +16,7 @@ iteration = 1000000
 fname = '../Data/agent_path/agent_road_0_new.txt'
 agent_id = []
 agent_path = []
+new_agent_path = []
 agent_path_x = []
 agent_path_y = []
 with open(fname,'r') as f:
@@ -68,11 +70,14 @@ for path in agent_path:
 for path in agent_path:
     if len(path)>step_num:
         path = path[len(path)-50:len(path)]
-print(agent_path[0])
+    new_agent_path.append(path)
+agent_path = new_agent_path
 
 road2index = {}
 cnt = 0
 for path in agent_path:
+    if len(path)>step_num:
+        print('hehe')
     for road in path:
         tp = (road[0],road[1])
         if tp not in road2index:
@@ -81,7 +86,6 @@ for path in agent_path:
 
 
 
-from __future__ import unicode_literals, print_function, division
 from io import open
 import unicodedata
 import string
@@ -99,13 +103,16 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class EncoderRNN(nn.Module):
-    def __init__(self, hidden_size):
+    def __init__(self, input_size, hidden_size):
         super(EncoderRNN, self).__init__()
+        self.input_size = input_size
         self.hidden_size = hidden_size
+        self.embedding = nn.Linear(input_size, hidden_size)
         self.gru = nn.GRU(hidden_size, hidden_size)
 
     def forward(self, input, hidden):
-        output, hidden = self.gru(input, hidden)
+        output = self.embedding(input).view(1,1,-1)
+        output, hidden = self.gru(output, hidden)
         return output, hidden
 
     def initHidden(self):
@@ -167,7 +174,7 @@ def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, deco
         encoder_output, encoder_hidden = encoder(
             input_tensor[ei], encoder_hidden)
         encoder_outputs[ei] = encoder_output[0, 0]
-
+    SOS_token = 0
     decoder_input = torch.tensor([[SOS_token]], device=device)
 
     decoder_hidden = encoder_hidden
@@ -179,10 +186,7 @@ def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, deco
             decoder_input, decoder_hidden, encoder_outputs)
         topv, topi = decoder_output.topk(1)
         decoder_input = topi.squeeze().detach()  # detach from history as input
-
         loss += criterion(decoder_output, target_tensor[di])
-        if decoder_input.item() == EOS_token:
-            break
 
     loss.backward()
 
@@ -206,14 +210,12 @@ def asMinutes(s):
     s -= m * 60
     return '%dm %ds' % (m, s)
 
-
 def timeSince(since, percent):
     now = time.time()
     s = now - since
     es = s / (percent)
     rs = es - s
     return '%s (- %s)' % (asMinutes(s), asMinutes(rs))
-
 
 ######################################################################
 # The whole training process looks like this:
@@ -229,7 +231,7 @@ def timeSince(since, percent):
 
 def tensorsFromPair(path):
     target_tensor = [road2index[(road[0],road[1])] for road in path]
-    return (torch.tensor(path, device=device), torch.tensor(target_tensor, dtype=torch.long, device=device))
+    return (torch.tensor(path, device=device), torch.tensor(target_tensor, dtype=torch.long, device=device).view(-1,1))
 
 def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.01):
     start = time.time()
@@ -243,24 +245,23 @@ def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, lear
                       for i in range(n_iters)]
     criterion = nn.NLLLoss()
 
-    for iter in range(1, n_iters + 1):
-        training_pair = training_pairs[iter - 1]
+    # for iter in range(1, n_iters + 1):
+    iter = 0
+    save_every = 500
+    while True:
+        iter += 1
+        training_pair = training_pairs[iter%n_iters]
         input_tensor = training_pair[0]
         target_tensor = training_pair[1]
-        if iter==1:
-            print(input_tensor)
-            print(target_tensor)
 
         loss = train(input_tensor, target_tensor, encoder,
                      decoder, encoder_optimizer, decoder_optimizer, criterion)
         print_loss_total += loss
         plot_loss_total += loss
 
-        if iter % print_every == 0:
+        if iter % save_every == 0:
             print_loss_avg = print_loss_total / print_every
-            print_loss_total = 0
-            print('%s (%d %d%%) %.4f' % (timeSince(start, iter / n_iters),
-                                         iter, iter / n_iters * 100, print_loss_avg))
+            new_save_path = save_path+'_iter_%d_loss_%.4f'%(iter, print_loss_avg)
             torch.save({
                         'iter':iter,
                         'encoder_state_dict': encoder.state_dict(),
@@ -268,11 +269,18 @@ def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, lear
                         'enoptimizer_state_dict': encoder_optimizer.state_dict(),
                         'deoptimizer_state_dict': decoder_optimizer.state_dict(),
                         'loss': print_loss_avg
-                       }, save_path)
+                       }, new_save_path)
 
+        if iter % print_every == 0:
+            print_loss_avg = print_loss_total / print_every
+            print_loss_total = 0
+            print('%s (%d %d%%) %.4f' % (timeSince(start, iter / n_iters),
+                                         iter, iter / n_iters * 100, print_loss_avg))
+
+input_size = 2
 hidden_size = 256
-encoder1 = EncoderRNN(hidden_size).to(device)
+encoder1 = EncoderRNN(input_size, hidden_size).to(device)
 #所有人一共经历了13760个道路
 attn_decoder1 = AttnDecoderRNN(hidden_size, 13760, dropout_p=0.1).to(device)
 
-trainIters(encoder1, attn_decoder1, 75000, print_every=5000)
+trainIters(encoder1, attn_decoder1, 75000, print_every=100)

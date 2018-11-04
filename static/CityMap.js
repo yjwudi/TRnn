@@ -14,8 +14,9 @@
 				cluster_sum = 4;
 				init();
 				animate();
-				loadAgent();
+				// loadAgent();
 				// loadRoad();
+				loadHighEntropyRoad();
 			}
 
 			function init()
@@ -167,6 +168,29 @@
 
 				window.addEventListener( 'resize', onWindowResize, false );
 
+			}
+
+			function loadHighEntropyRoad()
+			{
+				//每个类可视化的道路数量
+				var ce_road_array = map_data.ce_road_arr;
+				console.log("load high entropy road");
+
+				var road_vertices = map_data.road_vertices;
+				var road_lines = map_data.road_lines;
+
+				for(var i = 0; i < ce_road_array.length; i++)
+				{
+					var line = road_lines[parseInt(ce_road_array[i])];
+
+					var idx1 = parseInt(line[0]), idx2 = parseInt(line[1]);
+					var p1 = road_vertices[idx1], p2 = road_vertices[idx2];
+					var material = new THREE.LineBasicMaterial({color:0xff0000});
+				    var geometry = new THREE.Geometry();  
+				    geometry.vertices.push(new THREE.Vector3(parseFloat(p1[0]),parseFloat(p1[1]),parseFloat(p1[2])));  
+				    geometry.vertices.push(new THREE.Vector3(parseFloat(p2[0]),parseFloat(p2[1]),parseFloat(p2[2])));
+				    scene.add(new THREE.Line(geometry, material));
+				}
 			}
 
 			function loadRoad()

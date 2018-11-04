@@ -4,6 +4,7 @@ import numpy as np
 from pyutils.road_topic_probability_v2 import road_topic_prob
 from datetime import timedelta
 
+
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT']=timedelta(seconds=1)
 
@@ -154,9 +155,17 @@ def load_data():
     selected_cluster_id = read_single_file(selected_cluster_file)
     city_map['selected_cluster_id'] = selected_cluster_id
 
-    road_dict, cluster_road_dict = road_topic_prob()
+    #返回的cluster_road_dict, ce_dict都是list，每个元素是（key，value）这样的tuple
+    road_dict, cluster_road_dict, ce_dict = road_topic_prob()
     city_map['cluster_road_dict'] = cluster_road_dict
-    
+
+    ce_road_num = 20
+    ce_road_arr =[]
+    for i in range(min(ce_road_num,len(ce_dict))):
+    	ce_road_arr.append(ce_dict[i][0])
+    city_map['ce_road_arr'] = ce_road_arr
+
+
 @app.context_processor
 def override_url_for():
     return dict(url_for=dated_url_for)

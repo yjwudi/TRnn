@@ -11,6 +11,8 @@ agent_road_0.txt: 根据标准选出的所有agent的轨迹，轨迹由匹配好
 agent_id
 road_id1 road_id2 ... road_idn
 
+agent_road_0_time.txt: agent_road_0.txt中每个道路对应的时间，时间范围1-299
+
 agent_road_0_new.txt: 将agent_road_0.txt中的每个道路用中点坐标取整代替。
 格式：
 agent_id n

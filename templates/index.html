@@ -15,14 +15,17 @@
 		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     	<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
     	<script src="static/scatter.js" charset="utf-8"></script>
+    	<script src="static/pcp.js" charset="utf-8"></script>
     	<script type="text/javascript">
 			function startRender(){
 				var map_data = JSON.parse('{{ geo | tojson | safe}}');
-				threeStart(map_data);
-				showScatter();
+				// threeStart(map_data);
+				// showScatter();
+				showPCP();
 			}
 		</script>
 		<link rel="stylesheet" href="static/scatter.css" charset="utf-8">
+		<link rel="stylesheet" href="static/pcp.css" charset="utf-8">
 		<style>
 			body {
 				font-family: Monospace;
@@ -41,7 +44,7 @@
 			#canvas3d {
 				border: none;
 	            width: 80%;
-	            height: 600px;
+	            height: 200px;
 	            background-color: #EEEEEE;
 			}
 			a {
@@ -73,6 +76,7 @@
 		</div> -->
 		<div id="canvas3d"></div>
 		<div id="scatter"></div>
+		<div id="pcp"></div>
 		<!-- <input type="button" name="xAxis" value="xAxis"> -->
 
 

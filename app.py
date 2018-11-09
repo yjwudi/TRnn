@@ -2,6 +2,7 @@ import struct
 from flask import Flask, render_template
 import numpy as np
 from pyutils.road_topic_probability_v2 import road_topic_prob
+from pyutils.road_theme_variation import road_theme_variation
 from datetime import timedelta
 
 
@@ -159,10 +160,12 @@ def load_data():
     road_dict, cluster_road_dict, ce_dict = road_topic_prob()
     city_map['cluster_road_dict'] = cluster_road_dict
 
-    ce_road_num = 20
+    ce_road_num = 100
     ce_road_arr =[]
     for i in range(min(ce_road_num,len(ce_dict))):
     	ce_road_arr.append(ce_dict[i][0])
+    	print(ce_dict[i])
+    road_theme_variation(ce_road_arr)
     city_map['ce_road_arr'] = ce_road_arr
 
 

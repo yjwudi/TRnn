@@ -16,8 +16,8 @@ shelter_file = 'Data/shelter.dat'
 building_file = 'Data/building.txt'
 road_file = 'Data/road.dat'
 # road_file = 'Data/main_road.dat'
-selected_id_file = 'Data/agent_path/selected.txt'
-selected_cluster_file = 'Data/agent_path/selected_cluster_1.txt'
+selected_id_file = 'Data/agent_path/v1/selected.txt'
+selected_cluster_file = 'Data/agent_path/v1/selected_cluster_1.txt'
 
 x_move = 5391
 y_move = 61852.5
@@ -164,7 +164,6 @@ def load_data():
     ce_road_arr =[]
     for i in range(min(ce_road_num,len(ce_dict))):
     	ce_road_arr.append(ce_dict[i][0])
-    	print(ce_dict[i])
     road_theme_variation(ce_road_arr)
     city_map['ce_road_arr'] = ce_road_arr
 

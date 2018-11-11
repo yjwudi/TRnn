@@ -1,7 +1,7 @@
-function showPCP() {
+function showPCP(plot_width, plot_height) {
 	var m = [30, 10, 10, 10],
-	    w = 960 - m[1] - m[3],
-	    h = 500 - m[0] - m[2];
+	    w = plot_width - m[1] - m[3],
+	    h = plot_height - m[0] - m[2];
 
 	var x = d3.scale.ordinal().rangePoints([0, w], .5),
 	    y = {};

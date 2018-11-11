@@ -6,8 +6,8 @@ import random
 得到每条路在每个时间间隔内所属的主要主题
 '''
 
-id_file = 'Data/agent_path/selected.txt'
-cluster_file = 'Data/agent_path/selected_cluster_1.txt'
+id_file = 'Data/agent_path/v1/selected.txt'
+cluster_file = 'Data/agent_path/v1/selected_cluster_1.txt'
 road_file = 'Data/agent_path/agent_road_0.txt'
 time_file = 'Data/agent_path/agent_road_0_time.txt'
 
@@ -72,7 +72,7 @@ def road_theme_variation(road_arr):
 				id_lst[i] = last_id
 			last_id = id_lst[i]
 		result.append(id_lst)
-	print(result)
+	# print(result)
 	fname = 'static/pcp_test.csv'
 	with open(fname,'w') as f:
 		f.write('t1,t2,t3,t4,t5,t6\n')

@@ -1,8 +1,8 @@
-function showScatter() {
+function showScatter(plot_width, plot_height) {
 
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
-      width = 500 - margin.left - margin.right,
-      height = 260 - margin.top - margin.bottom;
+      width = plot_width - margin.left - margin.right,
+      height = plot_height - margin.top - margin.bottom;
 
   /* 
    * value accessor - returns the value to encode for a given data object.

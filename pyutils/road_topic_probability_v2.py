@@ -1,6 +1,7 @@
 #encoding=utf-8
 import numpy as np
 import math
+from pyutils.global_variable import cluster_num
 '''
 得到选取的轨迹的每段路，计算每段路在不同主题下的概率
 road_dict是一个字典，key是道路编号，value是一个数组，每个位置是道路在这个类的概率，p=道路i在类j中的数量/道路i在所有类中的数量
@@ -8,8 +9,8 @@ cluster_road_dict是一个list，每个位置是某个类对应的dict，key是�
 ce_dict是一个字典，key是道路编号，value是道路的熵
 '''
 agent_file = 'Data/agent_path/agent_road_0.txt'
-id_file = 'Data/agent_path/selected.txt'
-cluster_file = 'Data/agent_path/selected_cluster_1.txt'
+id_file = 'Data/agent_path/v1/selected.txt'
+cluster_file = 'Data/agent_path/v1/selected_cluster_1.txt'
 # agent_file = '../Data/agent_path/agent_road_0.txt'
 # id_file = '../Data/agent_path/selected.txt'
 # cluster_file = '../Data/agent_path/selected_cluster_1.txt'
@@ -21,7 +22,6 @@ def road_topic_prob():
 		selected_id = list(map(int, data))
 	print('selected_id[0]=',selected_id[0])
 
-	cluster_num = 4
 	selected_clusterid = np.loadtxt(cluster_file)
 	print('selected_clusterid len:', np.shape(selected_clusterid), selected_clusterid[0])
 
@@ -83,5 +83,4 @@ def road_topic_prob():
 	return road_dict, cluster_road_dict, ce_dict
 
 
-road_topic_prob()
 

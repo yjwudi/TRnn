@@ -109,7 +109,7 @@ with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
 
 results = np.array(results)
 print('results shape: ', np.shape(results))
-np.savetxt(feature_file, results);
+np.savetxt(feature_file, results)
 # with open(feature_file, 'w') as f:
 # 	for enc_state in results:
 # 		for i in range(len(enc_state)):

@@ -2,7 +2,6 @@
 from __future__ import unicode_literals, print_function, division
 import numpy as np
 from default import *
-import random
 
 np.random.seed(2016)
 
@@ -252,11 +251,9 @@ def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, lear
     iter = 0
     len_ = len(training_pairs)
     save_every = 1000
-    min_loss = 1000000    
+    
     while True:
         iter += 1
-        if iter%len_==0:
-            random.shuffle(training_pairs)
         training_pair = training_pairs[iter%len_]
         input_tensor = training_pair[0]
         target_tensor = training_pair[1]
@@ -283,9 +280,8 @@ def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, lear
         if iter % print_every == 0:
             print_loss_avg = print_loss_total / print_every
             print_loss_total = 0
-            with open('logs.txt','a') as f:
-                f.write('%s (%d %d%%) %.4f\n' % (timeSince(start, iter / n_iters),
-                                             iter, iter / n_iters * 100, print_loss_avg))
+            print('%s (%d %d%%) %.4f' % (timeSince(start, iter / n_iters),
+                                         iter, iter / n_iters * 100, print_loss_avg))
 
 input_size = 2
 hidden_size = 256

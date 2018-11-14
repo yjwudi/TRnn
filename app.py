@@ -18,6 +18,7 @@ road_file = 'Data/road.dat'
 # road_file = 'Data/main_road.dat'
 selected_id_file = 'Data/agent_path/v1/selected.txt'
 selected_cluster_file = 'Data/agent_path/v1/selected_cluster_1.txt'
+agent_road_file = 'Data/agent_path/agent_road_0.txt'
 
 x_move = 5391
 y_move = 61852.5
@@ -148,6 +149,7 @@ def load_data():
     	fname = 'Data/agent_path/agent_pos_0/agent_'+str(base)+'.txt'
     	read_traj_file(fname)
     selected_id = read_single_file(selected_id_file)
+    city_map['selected_id'] = selected_id
     selected_traj = []
     for idx in selected_id:
     	selected_traj.append(traj_map[idx])
@@ -166,6 +168,18 @@ def load_data():
     	ce_road_arr.append(ce_dict[i][0])
     road_theme_variation(ce_road_arr)
     city_map['ce_road_arr'] = ce_road_arr
+
+    agent_road = []
+    agent_id = []
+    with open(agent_road_file,"r") as f:
+    	data = f.readlines()
+    	for i in range(0,len(data),2):
+    		idx = int(data[i])
+    		path = list(map(int,data[i+1].split()))
+    		agent_id.append(idx)
+    		agent_road.append(path)
+    city_map['agent_id'] = agent_id
+    city_map['agent_road'] = agent_road
 
 
 @app.context_processor
@@ -187,4 +201,4 @@ def hello_world():
 
 if __name__ == '__main__':
 	load_data()
-	app.run(debug=True)
+	app.run(host='0.0.0.0',port=5000,debug=True)

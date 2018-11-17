@@ -208,6 +208,9 @@ function addRoad(idx)
     scene.add(new THREE.Line(geometry, material));
 }
 
+/*
+可以优化一下：map_data里面可以只传过来selected_id中的人的path
+*/
 function loadAgentRoad()
 {
 	var agent_id = map_data.agent_id;

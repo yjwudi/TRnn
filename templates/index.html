@@ -16,17 +16,20 @@
     	<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
     	<script src="static/scatter.js" charset="utf-8"></script>
     	<script src="static/pcp.js" charset="utf-8"></script>
+    	<script src="static/pixel.js" charset="utf-8"></script>
     	<script type="text/javascript">
 			function startRender(){
 				var map_data = JSON.parse('{{ geo | tojson | safe}}');
-				threeStart(map_data);
+				// threeStart(map_data);
 				var plot_width = 500, plot_height = 500;
 				showScatter(520, 400);
 				showPCP(550, 400);
+				showPixel();
 			}
 		</script>
 		<link rel="stylesheet" href="static/scatter.css" charset="utf-8">
 		<link rel="stylesheet" href="static/pcp.css" charset="utf-8">
+		<link rel="stylesheet" href="static/pixel.css" charset="utf-8">
 		<style>
 			body {
 				font-family: Monospace;
@@ -80,6 +83,7 @@
 			<div id="scatter" style="display:inline;"></div>
 			<div id="pcp" style="display:inline;"></div>
 		</div>
+		<div id="pixel"></div>
 		<!-- <input type="button" name="xAxis" value="xAxis"> -->
 
 

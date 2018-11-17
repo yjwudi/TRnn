@@ -26,14 +26,15 @@ function showPCP(plot_width, plot_height) {
 	        .domain(d3.extent(cities, function(p) { return +p[d]; }))
 	        .range([h, 0]));
 	  }));
+	  console.log(dimensions);
 
 	  // Add grey background lines for context.
-	  background = svg.append("g")
-	  	.attr("class", "background")
-	    .selectAll("path")
-	    .data(cities)
-	    .enter().append("path")
-	    .attr("d", path);
+	  // background = svg.append("g")
+	  // 	.attr("class", "background")
+	  //   .selectAll("path")
+	  //   .data(cities)
+	  //   .enter().append("path")
+	  //   .attr("d", path);
 
 	  // Add blue foreground lines for focus.
 	  foreground = svg.append("g")
@@ -54,33 +55,34 @@ function showPCP(plot_width, plot_height) {
 	  g.append("g")
 	      .attr("class", "axis")
 	      .each(function(d) { d3.select(this).call(axis.scale(y[d])); })
-	    .append("text")
+	      .append("text")
 	      .attr("text-anchor", "middle")
 	      .attr("y", -9)
 	      .text(String);
 
 	  // Add and store a brush for each axis.
-	  g.append("g")
-	      .attr("class", "brush")
-	      .each(function(d) { d3.select(this).call(y[d].brush = d3.svg.brush().y(y[d]).on("brush", brush)); })
-	    .selectAll("rect")
-	      .attr("x", -8)
-	      .attr("width", 16);
+	  // g.append("g")
+	  //     .attr("class", "brush")
+	  //     .each(function(d) { d3.select(this).call(y[d].brush = d3.svg.brush().y(y[d]).on("brush", brush)); })
+	  //     .selectAll("rect")
+	  //     .attr("x", -8)
+	  //     .attr("width", 16);
 	});
 
 	// Returns the path for a given data point.
 	function path(d) {
+		console.log(dimensions.map(function(p) { return [x(p), y[p](d[p])]; }));
 	  return line(dimensions.map(function(p) { return [x(p), y[p](d[p])]; }));
 	}
 
 	// Handles a brush event, toggling the display of foreground lines.
-	function brush() {
-	  var actives = dimensions.filter(function(p) { return !y[p].brush.empty(); }),
-	      extents = actives.map(function(p) { return y[p].brush.extent(); });
-	  foreground.style("display", function(d) {
-	    return actives.every(function(p, i) {
-	      return extents[i][0] <= d[p] && d[p] <= extents[i][1];
-	    }) ? null : "none";
-	  });
-	}
+	// function brush() {
+	//   var actives = dimensions.filter(function(p) { return !y[p].brush.empty(); }),
+	//       extents = actives.map(function(p) { return y[p].brush.extent(); });
+	//   foreground.style("display", function(d) {
+	//     return actives.every(function(p, i) {
+	//       return extents[i][0] <= d[p] && d[p] <= extents[i][1];
+	//     }) ? null : "none";
+	//   });
+	// }
 }

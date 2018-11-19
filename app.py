@@ -4,6 +4,8 @@ import numpy as np
 from pyutils.road_topic_probability_v2 import road_topic_prob
 from pyutils.road_theme_variation import road_theme_variation
 from datetime import timedelta
+from pyutils.global_variable import id_file as selected_id_file
+from pyutils.global_variable import cluster_file as selected_cluster_file
 
 
 app = Flask(__name__)
@@ -16,8 +18,6 @@ shelter_file = 'Data/shelter.dat'
 building_file = 'Data/building.txt'
 road_file = 'Data/road.dat'
 # road_file = 'Data/main_road.dat'
-selected_id_file = 'Data/agent_path/v1/selected.txt'
-selected_cluster_file = 'Data/agent_path/v1/selected_cluster_1.txt'
 agent_road_file = 'Data/agent_path/agent_road_0.txt'
 
 x_move = 5391
@@ -166,8 +166,10 @@ def load_data():
     ce_road_arr =[]
     for i in range(min(ce_road_num,len(ce_dict))):
     	ce_road_arr.append(ce_dict[i][0])
-    road_theme_variation(ce_road_arr)
+    connections, circles = road_theme_variation(ce_road_arr)
     city_map['ce_road_arr'] = ce_road_arr
+    city_map['connections'] = connections
+    city_map['circles'] = circles
 
     agent_road = []
     agent_id = []

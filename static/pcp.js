@@ -37,12 +37,19 @@ function showPCP(plot_width, plot_height) {
 	  //   .attr("d", path);
 
 	  // Add blue foreground lines for focus.
+	  svg.append("path")
+   	  .attr("d", function(d){
+        var line = d3.svg.line();
+        return line([[10,10],[80,60],[200,400]]);
+   	  })
+   	  .attr("fill", "red");
 	  foreground = svg.append("g")
 	  	.attr("class", "foreground")
 	  	.selectAll("path")
 	  	.data(cities)
 	    .enter().append("path")
-	    .attr("d", path);
+	    .attr("d", path)
+	   	.attr("fill", "red");
 
 	  // Add a group element for each dimension.
 	  var g = svg.selectAll(".dimension")
@@ -72,7 +79,8 @@ function showPCP(plot_width, plot_height) {
 	// Returns the path for a given data point.
 	function path(d) {
 		console.log(dimensions.map(function(p) { return [x(p), y[p](d[p])]; }));
-	  return line(dimensions.map(function(p) { return [x(p), y[p](d[p])]; }));
+	  // return line(dimensions.map(function(p) { return [x(p), y[p](d[p])]; }));
+	  return line([[1,1],[40,50],[160,20]]);
 	}
 
 	// Handles a brush event, toggling the display of foreground lines.

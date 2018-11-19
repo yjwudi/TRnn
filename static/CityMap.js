@@ -14,10 +14,10 @@ function threeStart(new_map_data)
 	cluster_sum = 4;
 	init();
 	animate();
-	// loadAgent();
+	loadAgent();
 	// loadRoad();
-	// loadHighEntropyRoad();
-	loadAgentRoad();
+	loadHighEntropyRoad();
+	// loadAgentRoad();
 }
 
 function init()

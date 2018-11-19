@@ -1,19 +1,20 @@
 #encoding=utf-8
 import numpy as np
 import random
+from pyutils.global_variable import cluster_num, id_file, cluster_file
 '''
 对于交叉熵大的路，统计每条路在不同时间间隔内，每个主题下的出现次数
 得到每条路在每个时间间隔内所属的主要主题
 '''
 
-id_file = 'Data/agent_path/v1/selected.txt'
-cluster_file = 'Data/agent_path/v1/selected_cluster_1.txt'
+
 road_file = 'Data/agent_path/agent_road_0.txt'
 time_file = 'Data/agent_path/agent_road_0_time.txt'
 
 
 # road_arr = [5601, 5642, 5605, 5603, 1321, 5650, 1322, 5628, 5656, 8072, 5598, 5662]
 def road_theme_variation(road_arr):
+	print(road_arr)
 	selected_id = []
 	with open(id_file, 'r') as f:
 		data = f.readlines()
@@ -78,9 +79,25 @@ def road_theme_variation(road_arr):
 		f.write('t1,t2,t3,t4,t5,t6\n')
 		for i in range(len(result)):
 			for j in range(len(result[i])-1):
-				m = random.uniform(-0.2,0.2)
-				f.write(str(result[i][j]+m)+',')
+				f.write(str(result[i][j])+',')
 			f.write(str(result[i][-1]))
 			f.write('\n')
+	connections = []
+	for t in range(5):
+		con_list = [[0 for col in range(cluster_num)] for row in range(cluster_num)]
+		for lst in result:
+			a = int(lst[t])
+			b = int(lst[t+1])
+			con_list[a][b] += 1
+		connections.append(con_list)
+	# print(connections)
+	circles = []
+	for t in range(6):
+		cle_lst = [0]*cluster_num
+		for lst in result:
+			cle_lst[int(lst[t])] += 1
+		circles.append(cle_lst)
+	# print(circles)
+	return connections, circles
 
 

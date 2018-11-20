@@ -63,15 +63,16 @@ def road_theme_variation(road_arr):
 				max_id = max(id_num,key=id_num.get)#出现次数最多的那一类
 				id_lst.append(max_id)
 			else:
-				if len(id_lst)==0:
-					id_lst.append(-1)
-				else:
-					id_lst.append(id_lst[-1])
-		last_id = id_lst[-1]
-		for i in range(len(id_lst)-1, -1, -1):
-			if id_lst[i] == -1:
-				id_lst[i] = last_id
-			last_id = id_lst[i]
+				id_lst.append(-1)
+				# if len(id_lst)==0:
+				# 	id_lst.append(-1)
+				# else:
+				# 	id_lst.append(id_lst[-1])
+		# last_id = id_lst[-1]
+		# for i in range(len(id_lst)-1, -1, -1):
+		# 	if id_lst[i] == -1:
+		# 		id_lst[i] = last_id
+		# 	last_id = id_lst[i]
 		result.append(id_lst)
 	# print(result)
 	fname = 'static/pcp_test.csv'
@@ -88,6 +89,8 @@ def road_theme_variation(road_arr):
 		for lst in result:
 			a = int(lst[t])
 			b = int(lst[t+1])
+			if a==-1 or b==-1:
+				continue
 			con_list[a][b] += 1
 		connections.append(con_list)
 	# print(connections)

@@ -1,7 +1,9 @@
 function showPCP(plot_width, plot_height, connections, circles) {
 	var m = [30, 10, 10, 10],
 	    w = plot_width - m[1] - m[3],
-	    h = plot_height - m[0] - m[2];
+	    h = plot_height - m[0] - m[2],
+	    legendElementWidth = 20,
+	    legendElementHeight = 10;
 
 	var x = d3.scale.ordinal().rangePoints([0, w], .5),
 	    y = {};
@@ -34,11 +36,12 @@ function showPCP(plot_width, plot_height, connections, circles) {
 	var tmpArray =connections.join(",").split(",");
 	var maxv = Math.max.apply(null,tmpArray);
 	console.log(maxv);
-	var widthRange = d3.scale.linear().domain([0, maxv]).range([0, 300]);
+	var widthRange = d3.scale.linear().domain([0, maxv]).range([0, 20]);
 
 	var radius_ = 30;
 	var x_dis = 150, y_dis = 80;
 	var move_dis = 0.1;
+	var bXmove = 100, bYmove = 5;
 	svg.append("g")
 	   .attr("class", "cons1")
 	   .selectAll("g")
@@ -55,37 +58,88 @@ function showPCP(plot_width, plot_height, connections, circles) {
 	   		  .each(function(d2, i2){
 	   		  	var y1 = 50+i2*y_dis;
 	   		  	d3.select(this)
-	   		  	  .append("path")
-	   		  	  .attr("d", function(d){
-	   		  	  	var line = d3.path();
-	   		  	  	for(var j = 0; j < d.length; j++){
-	   		  	  		var x2 = x1+x_dis;
-	   		  	  		var y2 = 50+j*y_dis;
-	   		  	  		var n = widthRange(d[j]);
-	   		  	  		line.moveTo(x1, y1);
-	   		  	  		for(var k = 0; k < n; k++)
-	   		  	  		{
-	   		  	  			line.moveTo(x1, y1+k*move_dis);
-	   		  	  			// line.moveTo(x1, y1);
-	   		  	  			var bXmove = 100, bYmove = 5;
-	   		  	  			if(j<i2){
-	   		  	  				// line.bezierCurveTo(x1+bXmove, y1-bYmove-k*move_dis, x2-bXmove, y2+bYmove-k*move_dis, x2, y2);
-	   		  	  				line.bezierCurveTo(x1+bXmove, y1-bYmove, x2-bXmove, y2+bYmove, x2, y2+k*move_dis);
-	   		  	  			}
-	   		  	  			else{
-	   		  	  				// line.bezierCurveTo(x1+bXmove, y1+bYmove+k*move_dis, x2-bXmove, y2-bYmove+k*move_dis, x2, y2);
-	   		  	  				line.bezierCurveTo(x1+bXmove, y1+bYmove, x2-bXmove, y2-bYmove, x2, y2+k*move_dis);
-	   		  	  			}
+		   		  .selectAll("g")
+		   		  .data(d2)
+		   		  .enter()
+		   		  .append("g")
+		   		  .each(function(d4, i4){
+		   		  	var y1 = 50+i2*y_dis;
+		   		  	d3.select(this)
+		   		  	  .append('path')
+		   		  	  .attr("d", function(d){
+		   		  	  	var line = d3.path();
+		   		  	  	var x2 = x1+x_dis;
+		   		  	  	var y2 = 50+i4*y_dis;
+		   		  	  	line.moveTo(x1, y1);
+		   		  	  	if(i4<i2){
+   		  	  				line.bezierCurveTo(x1+bXmove, y1-bYmove, x2-bXmove, y2+bYmove, x2, y2);
+   		  	  			}
+   		  	  			else if(i4==i2){
+   		  	  				line.lineTo(x2, y2);
+   		  	  			}
+   		  	  			else{
+   		  	  				line.bezierCurveTo(x1+bXmove, y1+bYmove, x2-bXmove, y2-bYmove, x2, y2);
+   		  	  			}
+		   		  	  	return line;
+		   		  	  })
+		   		  	  .attr("fill", "none")
+		   		  	  .attr("stroke", "steelblue")
+	   	          	  .attr("stroke-opacity", 0.7)
+	   	          	  .attr("stroke-width", function(d){return widthRange(d)});
+		   		  });
+
+
+	   		  	// d3.select(this)
+	   		  	//   .append("path")
+	   		  	//   .attr("d", function(d){
+	   		  	//   	var line = d3.path();
+	   		  	//   	for(var j = 0; j < d.length; j++){
+	   		  	//   		var x2 = x1+x_dis;
+	   		  	//   		var y2 = 50+j*y_dis;
+	   		  	//   		var n = widthRange(d[j]);
+	   		  	//   		var bXmove = 100, bYmove = 5;
+	   		  	//   		line.moveTo(x1, y1);
+	   		  	//   		if(j<i2){
+   		  	 //  				line.bezierCurveTo(x1+bXmove, y1-bYmove, x2-bXmove, y2+bYmove, x2, y2);
+   		  	 //  			}
+   		  	 //  			else if(j==i2){
+   		  	 //  				line.lineTo(x2, y2);
+   		  	 //  			}
+   		  	 //  			else{
+   		  	 //  				line.bezierCurveTo(x1+bXmove, y1+bYmove, x2-bXmove, y2-bYmove, x2, y2);
+   		  	 //  			}
+	   		  	//   		// for(var k = -n/2; k < n/2; k++)
+	   		  	//   		// {
+	   		  	//   		// 	line.moveTo(x1, y1+k*move_dis);
+	   		  	//   		// 	// line.moveTo(x1, y1);
+	   		  	//   		// 	var bXmove = 100, bYmove = 5;
+	   		  	//   		// 	if(j<i2){
+	   		  	//   		// 		// line.bezierCurveTo(x1+bXmove, y1-bYmove-k*move_dis, x2-bXmove, y2+bYmove-k*move_dis, x2, y2);
+	   		  	//   		// 		line.bezierCurveTo(x1+bXmove, y1-bYmove, x2-bXmove, y2+bYmove, x2, y2+k*move_dis);
+	   		  	//   		// 	}
+	   		  	//   		// 	else{
+	   		  	//   		// 		// line.bezierCurveTo(x1+bXmove, y1+bYmove+k*move_dis, x2-bXmove, y2-bYmove+k*move_dis, x2, y2);
+	   		  	//   		// 		line.bezierCurveTo(x1+bXmove, y1+bYmove, x2-bXmove, y2-bYmove, x2, y2+k*move_dis);
+	   		  	//   		// 	}
+	   		  	//   		// 	break;
 	   		  	  			
-	   		  	  		}
-	   		  	  	}
-	   		  	  	return line;
-	   		  	  })
-	   		  	  .attr("fill", "none")
-	   			  .attr("stroke", "steelblue")
-	   	          .attr("stroke-opacity", 0.7)
-	   		  })
-	   });
+	   		  	//   		// }
+	   		  	//   	}
+	   		  	//   	return line;
+	   		  	//   })
+	   		  	//   .attr("fill", "none")
+	   			  // .attr("stroke", "steelblue")
+	   	    //       .attr("stroke-opacity", 0.7)
+	   	    //       .attr("stroke-width", 2);
+	   		});
+	    });
+	tmpArray =circles.join(",").split(",");
+	maxv = Math.max.apply(null,tmpArray);
+	console.log(maxv);
+	var colors = ["#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"]
+	var colorScale = d3.scale.quantile()
+				   .domain([0,maxv])
+				   .range(colors);
 	svg.append("g")
 	   .attr("class", "circles")
 	   .selectAll("g")
@@ -106,9 +160,30 @@ function showPCP(plot_width, plot_height, connections, circles) {
 	   		  	  .attr("cx", x1)
 	   		  	  .attr("cy", y1)
 	   		  	  .attr("r", radius_)
-	   		  	  .style("fill", "red")
+	   		  	  .style("fill", d=>colorScale(d2))
 	   		  })
 	   });
+
+	 var legend = svg.selectAll(".legend")
+          .data([0].concat(colorScale.quantiles()), function(d) { return d; });
+
+      legend.enter().append("g")
+          .attr("class", "legend");
+
+      legend.append("rect")
+        .attr("x", function(d, i) { return legendElementWidth * i+50; })
+        .attr("y", h)
+        .attr("width", legendElementWidth)
+        .attr("height", legendElementHeight)
+        .style("fill", function(d, i) { return colors[i]; });
+
+      // legend.append("text")
+      //   .attr("class", "mono")
+      //   .text(function(d) { return "≥ " + Math.round(d); })
+      //   .attr("x", function(d, i) { return legendElementWidth * i; })
+      //   .attr("y", h + gridSize);
+
+      legend.exit().remove();
 	    
 	// svg.append("path")
  //   	   .attr("d", function(d){

@@ -16,7 +16,7 @@ function threeStart(new_map_data)
 	animate();
 	loadAgent();
 	// loadRoad();
-	loadHighEntropyRoad();
+	// loadHighEntropyRoad();
 	// loadAgentRoad();
 }
 
@@ -33,6 +33,7 @@ function init()
 	renderer = new THREE.WebGLRenderer( { antialias: true } );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( width, height );
+	renderer.setClearColor('rgb(255,255,255)',1.0);
 	// renderer.setClearColor('rgb(135,206,250)',1.0);  
 	// renderer.setClearColor(0xff0000,1.0);
 	document.getElementById('canvas3d').appendChild( renderer.domElement );

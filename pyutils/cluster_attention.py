@@ -4,8 +4,8 @@ import numpy as np
 from global_variable import cluster_num
 
 
-id_file = '../Data/agent_path/v1/selected.txt'
-feature_file = '../Data/agent_path/v1/selected_feature.txt'
+id_file = '../Data/agent_path/selected.txt'
+feature_file = '../Data/agent_path/selected_feature.txt'
 
 
 id_arr = np.loadtxt(id_file)
@@ -16,7 +16,7 @@ print(np.shape(feature_arr))
 kmeans_total = KMeans(n_clusters=cluster_num, random_state=0).fit(feature_arr)
 
 
-np.savetxt('../Data/agent_path/v1/selected_cluster_1.txt', kmeans_total.labels_, fmt='%d')
+np.savetxt('../Data/agent_path/selected_cluster_1.txt', kmeans_total.labels_, fmt='%d')
 
 # PCA
 from sklearn.manifold import TSNE

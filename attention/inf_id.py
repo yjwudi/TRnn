@@ -14,8 +14,9 @@ import torch.nn as nn
 from torch import optim
 import torch.nn.functional as F
 MAX_LENGTH = 50
-save_path = 'logs'
+save_path = 'mse_train_logs'
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cpu")
 teacher_forcing_ratio = 0.5
 
 np.random.seed(2016)
@@ -123,7 +124,7 @@ class EncoderRNN(nn.Module):
         self.gru = nn.GRU(hidden_size, hidden_size)
 
     def forward(self, input, hidden):
-        output = self.embedding(input).view(1,1,-1)
+        output = self.embedding(input).view(1, 1, -1)
         output, hidden = self.gru(output, hidden)
         return output, hidden
 
@@ -139,6 +140,9 @@ loss = checkpoint['loss']
 print('iter=%d'%(iter)+',loss=%f'%(loss))
 encoder1.load_state_dict(checkpoint['encoder_state_dict'])
 
+def tensorsFromPair(path):
+    return (torch.tensor(path, device=device), torch.tensor(path, device=device))
+
 results = []
 for path in agent_path:
     training_pair = tensorsFromPair(path)
@@ -147,10 +151,12 @@ for path in agent_path:
     input_length = input_tensor.size(0)
     encoder_hidden = encoder1.initHidden()
     for ei in range(input_length):
-        encoder_output, encoder_hidden = encoder(
+        encoder_output, encoder_hidden = encoder1(
             input_tensor[ei], encoder_hidden)
-    results.append(encoder_hidden)
+    results.append(encoder_hidden[0][0].cpu().detach().numpy())
 
 results = np.array(results)
 print('results shape: ', np.shape(results))
+print(results[0])
+print(results[1])
 np.savetxt(feature_file, results)

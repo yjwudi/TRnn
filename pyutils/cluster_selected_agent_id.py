@@ -4,8 +4,8 @@ import numpy as np
 from global_variable import cluster_num
 
 
-id_file = '../Data/agent_path/v1/selected.txt'
-feature_file = '../Data/agent_path/v1/selected_feature_lstm.txt'
+id_file = '../Data/agent_path/selected.txt'
+feature_file = '../Data/agent_path/selected_feature.txt'
 
 
 id_arr = np.loadtxt(id_file)

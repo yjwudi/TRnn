@@ -21,7 +21,7 @@
     	<script type="text/javascript">
 			function startRender(){
 				var map_data = JSON.parse('{{ geo | tojson | safe}}');
-				// threeStart(map_data);
+				threeStart(map_data);
 				var plot_width = 500, plot_height = 500;
 				showScatter(520, 400);
 				showPCP(1050, 450, map_data.connections, map_data.circles);
@@ -79,7 +79,7 @@
 				<input type="button" value="show_upper" onclick="showAgent(false);"/>
 			</span>
 		</div> -->
-		<!-- <div id="canvas3d"></div> -->
+	    <div id="canvas3d"></div>
 		<div>
 			<div id="scatter" style="display:inline;"></div>
 			<div id="pcp" style="display:inline;"></div>

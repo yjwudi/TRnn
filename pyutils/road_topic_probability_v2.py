@@ -66,8 +66,7 @@ def road_topic_prob():
 		# 	print(road_dict[key])
 	for i in range(cluster_num):
 		cluster_road_dict[i] = sorted(cluster_road_dict[i].items(), key=lambda item:item[1], reverse=True)
-	# print(cluster_road_dict[0])
-	# print(cluster_road_dict[1])
+
 	ce_dict = dict()
 	for key in road_dict:
 		sum_ = 0

@@ -14,7 +14,8 @@ time_file = 'Data/agent_path/agent_road_0_time.txt'
 
 # road_arr = [5601, 5642, 5605, 5603, 1321, 5650, 1322, 5628, 5656, 8072, 5598, 5662]
 def road_theme_variation(road_arr):
-	print(road_arr)
+	# road_arr = [5601, 5642, 5605, 5603, 1321, 5650, 1322, 5628, 5656, 8072, 5598, 5662]
+	# print(road_arr)
 	selected_id = []
 	with open(id_file, 'r') as f:
 		data = f.readlines()
@@ -73,6 +74,8 @@ def road_theme_variation(road_arr):
 		# 	if id_lst[i] == -1:
 		# 		id_lst[i] = last_id
 		# 	last_id = id_lst[i]
+		if int(id_lst[4]) == -1:
+			continue
 		result.append(id_lst)
 	# print(result)
 	fname = 'static/pcp_test.csv'
@@ -98,6 +101,8 @@ def road_theme_variation(road_arr):
 	for t in range(6):
 		cle_lst = [0]*cluster_num
 		for lst in result:
+			if int(lst[t]) == -1:
+				continue
 			cle_lst[int(lst[t])] += 1
 		circles.append(cle_lst)
 	# print(circles)

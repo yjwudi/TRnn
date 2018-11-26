@@ -14,7 +14,7 @@ function threeStart(new_map_data)
 	cluster_sum = 4;
 	init();
 	animate();
-	loadAgent();
+	// loadAgent();
 	// loadRoad();
 	// loadHighEntropyRoad();
 	// loadAgentRoad();
@@ -308,7 +308,7 @@ function loadAgent()
 	{
 		var material = new THREE.LineBasicMaterial({color:0xff0000});
 		var cluster_idx = parseInt(cluster_id_array[i]);
-		// if(cluster_idx!=4)
+		// if(cluster_idx==3)
 		// 	continue;
 		// console.log('he');
 		switch(cluster_idx)

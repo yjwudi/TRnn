@@ -11,21 +11,23 @@ function showPixel(){
       times = ["1a", "2a", "3a", "4a", "5a", "6a", "7a", "8a", "9a", "10a", "11a", "12a", "1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p", "10p", "11p", "12p"];
       datasets = ["static/road_number.tsv"];
 
+      console.log(gridSize);
+
   var svg = d3.select("#pixel").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  var dayLabels = svg.selectAll(".dayLabel")
-      .data(days)
-      .enter().append("text")
-        .text(function (d) { return d; })
-        .attr("x", 0)
-        .attr("y", function (d, i) { return i * gridSize; })
-        .style("text-anchor", "end")
-        .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
-        // .attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
+  // var dayLabels = svg.selectAll(".dayLabel")
+  //     .data(days)
+  //     .enter().append("text")
+  //       .text(function (d) { return d; })
+  //       .attr("x", 0)
+  //       .attr("y", function (d, i) { return i * gridSize; })
+  //       .style("text-anchor", "end")
+  //       .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
+  //       // .attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
 
   var timeLabels = svg.selectAll(".timeLabel")
         .data(times)
@@ -43,7 +45,8 @@ function showPixel(){
       return {
         cluster: +d.cluster,
         road: +d.road,
-        value: +d.value
+        value: +d.value,
+        ridx: +d.road_idx
       };
     },
     function(error, data) {
@@ -66,12 +69,11 @@ function showPixel(){
           .attr("height", gridSize)
           .style("fill", colors[0])
           .on("click", function() {
-            console.log(d3.event);
+            // console.log(d3.event);
             var offX = d3.event.offsetX;
             var offY = d3.event.offsetY;
-            var cluster_idx = parseInt(offX/50)-1;
-            var road_idx = parseInt(offY/50);
-            console.log(cluster_idx, road_idx);
+            var cluster_idx = parseInt((offY-margin.top)/gridSize);
+            var road_idx = parseInt((offX-margin.left)/gridSize);
           });
 
       cards.transition().duration(1000)

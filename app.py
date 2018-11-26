@@ -162,10 +162,11 @@ def load_data():
     road_dict, cluster_road_dict, ce_dict = road_topic_prob()
     city_map['cluster_road_dict'] = cluster_road_dict
 
-    ce_road_num = 100
+    ce_road_num = 1200
     ce_road_arr =[]
     for i in range(min(ce_road_num,len(ce_dict))):
     	ce_road_arr.append(ce_dict[i][0])
+    	# print(road_dict[ce_dict[i][0]])
     connections, circles = road_theme_variation(ce_road_arr)
     city_map['ce_road_arr'] = ce_road_arr
     city_map['connections'] = connections

@@ -196,6 +196,7 @@ function loadHighEntropyRoad()
 }
 function addRoad(idx)
 {
+	console.log(idx);
 	var road_vertices = map_data.road_vertices;
 	var road_lines = map_data.road_lines;
 

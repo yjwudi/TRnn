@@ -2,7 +2,7 @@ function showPixel(){
 
   var margin = { top: 50, right: 0, bottom: 100, left: 30 },
       width = 1260 - margin.left - margin.right,
-      height = 630 - margin.top - margin.bottom,
+      height = 200 - margin.top - margin.bottom,
       gridSize = Math.floor(width / 50),
       legendElementWidth = gridSize*2,
       buckets = 9,

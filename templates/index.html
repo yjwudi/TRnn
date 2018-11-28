@@ -18,14 +18,29 @@
     	<script src="static/scatter.js" charset="utf-8"></script>
     	<script src="static/trans.js" charset="utf-8"></script>
     	<script src="static/pixel.js" charset="utf-8"></script>
+		<script src="static/line_chart.js" charset="utf-8"></script>
     	<script type="text/javascript">
 			function startRender(){
 				var map_data = JSON.parse('{{ geo | tojson | safe}}');
-				threeStart(map_data);
+				// threeStart(map_data);
 				var plot_width = 500, plot_height = 500;
-				showScatter(520, 400);
-				showPCP(1050, 450, map_data.connections, map_data.circles);
+				// showScatter(520, 400);
+				// showPCP(1050, 450, map_data.connections, map_data.circles);
 				showPixel();
+				var road_time_num = map_data.road_time_num;
+				console.log(road_time_num[1426]);
+				var time_num_arr = road_time_num[1426];
+				var class_time_arr = new Array();
+				var time_n = time_num_arr.length, cluster_n = time_num_arr[0].length;
+				for(var i = 0; i < cluster_n; i++)
+				    class_time_arr[i] = new Array();
+				for(var i = 0; i < time_n; i++){
+				    for(var j = 0; j < cluster_n; j++){
+				        class_time_arr[j][i] = time_num_arr[i][j];
+					}
+				}
+				console.log(class_time_arr);
+				showLineChart(class_time_arr);
 			}
 		</script>
 		<link rel="stylesheet" href="static/scatter.css" charset="utf-8">
@@ -79,12 +94,13 @@
 				<input type="button" value="show_upper" onclick="showAgent(false);"/>
 			</span>
 		</div> -->
-	    <div id="canvas3d"></div>
-		<div>
-			<div id="scatter" style="display:inline;"></div>
-			<div id="pcp" style="display:inline;"></div>
-		</div>
+		<!--<div>-->
+			<!--<div id="scatter" style="display:inline;"></div>-->
+			<!--<div id="pcp" style="display:inline;"></div>-->
+		<!--</div>-->
+		<div id="line_chart"></div>
 		<div id="pixel"></div>
+		<!--<div id="canvas3d"></div>-->
 		<!-- <input type="button" name="xAxis" value="xAxis"> -->
 
 

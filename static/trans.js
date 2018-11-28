@@ -32,10 +32,9 @@ function showPCP(plot_width, plot_height, connections, circles) {
 	// 	[25,18,8],
 	// 	[18,3,26]
 	// 	]];
-	console.log(connections);
+
 	var tmpArray =connections.join(",").split(",");
 	var maxv = Math.max.apply(null,tmpArray);
-	console.log(maxv);
 	var widthRange = d3.scale.linear().domain([0, maxv]).range([0, 20]);
 
 	var radius_ = 30;

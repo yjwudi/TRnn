@@ -1,9 +1,9 @@
-from global_variable import cluster_num
+from pyutils.global_variable import cluster_num
 
-agent_road_file = '../Data/agent_path/agent_road_0.txt'
-selected_id_file = '../Data/agent_path/selected.txt'
-selected_cluster_file = '../Data/agent_path/selected_cluster_1.txt'
-outfile = '../static/road_number.tsv'
+agent_road_file = 'Data/agent_path/agent_road_0.txt'
+selected_id_file = 'Data/agent_path/selected.txt'
+selected_cluster_file = 'Data/agent_path/selected_cluster_1.txt'
+outfile = 'static/road_number.tsv'
 
 '''
 从每一类中找到single_target个通过人数最多的道路
@@ -80,5 +80,5 @@ def road_high_number():
 			for road in road_cluster_dict:
 				f.write('%d\t%d\t%d\t%d\n'%(cid, i, road_cluster_dict[road][cid], road))
 				i += 1
-	# return
-road_high_number()
+	return road_high_number_set
+# road_high_number()

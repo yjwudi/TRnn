@@ -2,8 +2,8 @@ function showLineChart(class_time_arr) {
     var parseDate = d3.time.format("%m/%d/%Y").parse;
     var margin = {left: 50, right: 20, top: 20, bottom: 100 };
 
-    var width = 600 - margin.left - margin.right;
-    var height = 600 - margin.top - margin.bottom;
+    var width = 400 - margin.left - margin.right;
+    var height = 300 - margin.top - margin.bottom;
     var max = 0;
     var xNudge = 50;
     var yNudge = 20;

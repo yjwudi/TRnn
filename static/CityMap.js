@@ -14,10 +14,16 @@ function threeStart(new_map_data)
 	cluster_sum = 4;
 	init();
 	animate();
-	// loadAgent();
+	loadAgent();
 	// loadRoad();
 	// loadHighEntropyRoad();
 	// loadAgentRoad();
+}
+
+function clearAgent(){
+	for(var i = 0; i < agent_line_array.length; i++){
+		scene.remove(agent_line_array[i]);
+	}
 }
 
 function init()
@@ -92,26 +98,6 @@ function init()
 	scene.add(river_mesh);
 	console.log('river added he');
 
-	// var city_vertices = map_data.city_vertices;
-	// var city_faces = map_data.city_faces;
-	// var city_geomotry = new THREE.Geometry();
-	// for(var i = 0; i < city_vertices.length; i++)
-    // {
-    //    var point = city_vertices[i];
-    //    var p = new THREE.Vector3(parseFloat(point[0]), parseFloat(point[1]), parseFloat(point[2]));
-    //    city_geomotry.vertices.push(p);
-    // }
-    // for(var i = 0; i < city_faces.length; i++)
-    // {
-    //    var face = city_faces[i];
-    //    var f = new THREE.Face3(parseInt(face[0]), parseInt(face[1]), parseInt(face[2]));
-    //    city_geomotry.faces.push(f);
-    // }
-    // console.log(city_geomotry.vertices.length, city_geomotry.faces.length);
-    // var city_material = new THREE.MeshBasicMaterial({color: 0x4a708b});
-	// var city_mesh = new THREE.Mesh(city_geomotry, city_material);
-	// scene.add(city_mesh);
-	// console.log('city added');
 
 	var city_mat_x = map_data.city_mat_x;
 	var city_mat_y = map_data.city_mat_y;
@@ -196,7 +182,6 @@ function loadHighEntropyRoad()
 }
 function addRoad(idx)
 {
-	console.log(idx);
 	var road_vertices = map_data.road_vertices;
 	var road_lines = map_data.road_lines;
 
@@ -299,8 +284,12 @@ function loadRoad()
 	}
 }
 
-function loadAgent() 
+
+function showSingleAgent(target_idx)
 {
+	target_idx = 2;
+	if(target_idx == -1)
+		target_idx = parseInt(document.getElementById('show_num_input').value);
 	var agent_pos_array = map_data.selected_traj;
 	var cluster_id_array = map_data.selected_cluster_id;
 	var sum = 0;
@@ -309,9 +298,8 @@ function loadAgent()
 	{
 		var material = new THREE.LineBasicMaterial({color:0xff0000});
 		var cluster_idx = parseInt(cluster_id_array[i]);
-		// if(cluster_idx==3)
-		// 	continue;
-		// console.log('he');
+		if(cluster_idx!=target_idx)
+			continue;
 		switch(cluster_idx)
 		{
 		case -1:
@@ -345,7 +333,7 @@ function loadAgent()
 	    	var p = new THREE.Vector3(parseFloat(agent_pos_array[i][j][0]), parseFloat(agent_pos_array[i][j][1]), parseFloat(agent_pos_array[i][j][2]));
 	    	geometry.vertices.push(p);
 	    }
-	    var point = geometry.vertices[geometry.vertices.length-1];
+	    // var point = geometry.vertices[geometry.vertices.length-1];
 	    // if(point.y<1890)continue;
 	    // if(point.y<2000)continue;
 	    // sum += 1;
@@ -359,19 +347,25 @@ function loadAgent()
 	    agent_line_array[i] = line;
 	    scene.add(line);
 	}
-	// console.log(sum);
+}
+function loadAgent() 
+{
+	var cluster_num = map_data.cluster_num;
+	for(var i = 0; i < cluster_num; i++){
+		showSingleAgent(i);
+	}
 }
 
-
-function onWindowResize() 
+function onWindowResize()
 {
+	console.log('resize??');
 	width = document.getElementById('canvas3d').clientWidth;
 	height = document.getElementById('canvas3d').clientHeight;
 
 	camera.aspect = width / height;
 	camera.updateProjectionMatrix();
 
-	controls.handleResize();
+	// controls.handleResize();
 	renderer.setSize( width, height );
 
 }

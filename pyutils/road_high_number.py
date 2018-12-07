@@ -74,7 +74,7 @@ def road_high_number():
 	# print(road_cluster_dict)
 
 	with open(outfile, 'w') as f:
-		f.write('cluster\troad\tvalue\troad_idx\n')
+		f.write('cluster\troad\tvalue\tridx\n')
 		for cid in range(cluster_num):
 			i = 1
 			for road in road_cluster_dict:

@@ -22,10 +22,16 @@
     	<script type="text/javascript">
 			function startRender(){
 				var map_data = JSON.parse('{{ geo | tojson | safe}}');
-				// threeStart(map_data);
+				threeStart(map_data);
+				// var cluster_num = map_data.cluster_num;
+				// var selid = document.getElementById("sid");
+				//  for(var i=0; i<cluster_num;i++){
+				//      selid.option[i] = new Option(toString(i),toString(i));
+				//      console.log(toString(i),toString(i));
+				//  }
 				var plot_width = 500, plot_height = 500;
-				// showScatter(520, 400);
-				// showPCP(1050, 450, map_data.connections, map_data.circles);
+				showScatter(520, 400);
+				showPCP(850, 450, map_data.connections, map_data.circles);
 				showPixel();
 				var road_time_num = map_data.road_time_num;
 				console.log(road_time_num[1426]);
@@ -50,11 +56,12 @@
 			body {
 				font-family: Monospace;
 				background-color: #fff;
-				margin: 0px;
+				width: 100%;
+				text-align:center;
 				overflow: auto;
 			}
-			#info {
-				position: absolute;
+			#interact {
+				/*position: absolute;*/
 				color: #fff;
 				top: 0px;
 				width: 100%;
@@ -65,21 +72,17 @@
 				border: none;
 	            width: 80%;
 	            height: 800px;
+				margin-left: auto;
+				margin-right: auto;
+				text-align:center;
 	            background-color: #EEEEEE;
 			}
-			a {
-				color: #fff;
+			#tmp {
+				margin: 10px;
+				width: 10px;
+	            height: 10px;
 			}
 		</style>
-<!-- 		<style type="text/css">
-            div#canvas3d{
-                  border: none;
-                  cursor: move;
-                  width: 1400px;
-                  height: 800px;
-                  background-color: #EEEEEE;
-                }
-        </style> -->
 
 	</head>
 	<body onload='startRender();'>
@@ -94,13 +97,23 @@
 				<input type="button" value="show_upper" onclick="showAgent(false);"/>
 			</span>
 		</div> -->
-		<!--<div>-->
-			<!--<div id="scatter" style="display:inline;"></div>-->
-			<!--<div id="pcp" style="display:inline;"></div>-->
-		<!--</div>-->
-		<div id="line_chart"></div>
-		<div id="pixel"></div>
-		<!--<div id="canvas3d"></div>-->
+		<div id="interact">
+			<input type="text" id="cluster_num_input" />
+			<input type="button" value="cluster" id="cluster_btn" />
+			<input type="text" id="show_num_input" />
+			<input type="button" value="show" id="show_single_btn" onclick="showSingleAgent(-1);" />
+			<input type="button" value="clear" id="clear_btn" onclick="clearAgent();" />
+		</div>
+		<div id="canvas3d"></div>
+		<div>
+			<div id="pcp" style="display:inline;"></div>
+			<div id="scatter" style="display:inline;"></div>
+		</div>
+		<div>
+			<div id="pixel" style="display:inline;"></div>
+			<div id="line_chart" style="display:inline;"></div>
+		</div>
+
 		<!-- <input type="button" name="xAxis" value="xAxis"> -->
 
 

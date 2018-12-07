@@ -14,7 +14,7 @@ import torch.nn as nn
 from torch import optim
 import torch.nn.functional as F
 MAX_LENGTH = 50
-save_path = 'mse_train_logs'
+save_path = 'mse_noattn_train_logs'
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # device = torch.device("cpu")
 teacher_forcing_ratio = 0.5

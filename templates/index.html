@@ -31,8 +31,8 @@
 				//  }
 				var plot_width = 500, plot_height = 500;
 				showScatter(520, 400);
-				showPCP(850, 450, map_data.connections, map_data.circles);
-				showPixel();
+				showPCP(850, 450, map_data);
+				showPixel(map_data);
 				var road_time_num = map_data.road_time_num;
 				console.log(road_time_num[1426]);
 				var time_num_arr = road_time_num[1426];
@@ -45,7 +45,6 @@
 				        class_time_arr[j][i] = time_num_arr[i][j];
 					}
 				}
-				console.log(class_time_arr);
 				showLineChart(class_time_arr);
 			}
 		</script>

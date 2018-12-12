@@ -1,4 +1,4 @@
-function showPixel(){
+function showPixel(map_data){
 
   var margin = { top: 50, right: 0, bottom: 100, left: 30 },
       width = 950 - margin.left - margin.right,
@@ -7,11 +7,15 @@ function showPixel(){
       legendElementWidth = gridSize*2,
       buckets = 9,
       colors = ["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"], // alternatively colorbrewer.YlGnBu[9]
-      days = ["0", "1", "2", "3"],
-      times = ["1a", "2a", "3a", "4a", "5a", "6a", "7a", "8a", "9a", "10a", "11a", "12a", "1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p", "10p", "11p", "12p"];
-      datasets = ["static/road_number.tsv"];
+      days = new Array(),
+      times = ["1a", "2a", "3a", "4a", "5a", "6a", "7a", "8a", "9a", "10a", "11a", "12a", "1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p", "10p", "11p", "12p"],
+      datasets = ["static/road_number.tsv"],
+      cluster_num = map_data.cluster_num;
 
-      console.log(gridSize);
+  for(var i = 0; i < cluster_num; i++){
+		days[i] = i.toString();
+	}
+
 
   var svg = d3.select("#pixel").append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -21,12 +25,13 @@ function showPixel(){
 
   var dayLabels = svg.selectAll(".dayLabel")
       .data(days)
-      .enter().append("text")
-        .text(function (d) { return d; })
-        .attr("x", 0)
-        .attr("y", function (d, i) { return i * gridSize; })
-        .style("text-anchor", "end")
-        .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
+      .enter()
+      .append("text")
+      .text(function (d) { return d; })
+      .attr("x", 0)
+      .attr("y", function (d, i) { return i * gridSize; })
+      .style("text-anchor", "end")
+      .attr("transform", "translate(-6," + gridSize / 1.5 + ")");
         // .attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
 
   var timeLabels = svg.selectAll(".timeLabel")
@@ -36,7 +41,7 @@ function showPixel(){
         .attr("x", function(d, i) { return i * gridSize; })
         .attr("y", 0)
         .style("text-anchor", "middle")
-        .attr("transform", "translate(" + gridSize / 2 + ", -6)")
+        .attr("transform", "translate(" + gridSize / 2 + ", -6)");
         // .attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
 
   var heatmapChart = function(tsvFile) {

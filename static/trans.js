@@ -1,4 +1,4 @@
-function showPCP(plot_width, plot_height, connections, circles) {
+function showPCP(plot_width, plot_height, map_data) {
 	var m = [30, 10, 10, 10],
 	    w = plot_width - m[1] - m[3],
 	    h = plot_height - m[0] - m[2],
@@ -7,7 +7,9 @@ function showPCP(plot_width, plot_height, connections, circles) {
 
 	var x = d3.scale.ordinal().rangePoints([0, w], .5),
 	    y = {};
-
+	var connections = map_data.connections;
+	var circles = map_data.circles;
+	var cluster_num = map_data.cluster_num;
 
 	var svg = d3.select("#pcp").append("svg")
 	    .attr("width", w + m[1] + m[3])
@@ -19,19 +21,11 @@ function showPCP(plot_width, plot_height, connections, circles) {
 		{"x_axis":70,"y_axis":70,"radius":2,"color":"purple"},
 		{"x_axis":110,"y_axis":100,"radius":2,"color":"red"}   
 		]];
-	// var circles = [[10,20,30],
-	// 			   [10,20,30],
-	// 			   [10,20,30]];
-	// var connections = [[
-	// 	[10,50,30],
-	// 	[25,18,8],
-	// 	[18,3,26]
-	// 	],
-	// 	[
-	// 	[30,20,30],
-	// 	[25,18,8],
-	// 	[18,3,26]
-	// 	]];
+	var days = new Array();
+	var times = ["t1", "t2", "t3", "t4", "t5", "t6"];
+	for(var i = 0; i < cluster_num; i++){
+		days[i] = i.toString();
+	}
 
 	var tmpArray =connections.join(",").split(",");
 	var maxv = Math.max.apply(null,tmpArray);
@@ -39,8 +33,24 @@ function showPCP(plot_width, plot_height, connections, circles) {
 
 	var radius_ = 30;
 	var x_dis = 150, y_dis = 80;
-	var move_dis = 0.1;
 	var bXmove = 100, bYmove = 5;
+	var dayLabels = svg.selectAll(".dayLabel")
+		               .data(days)
+					   .enter()
+					   .append("text")
+					   .text(function (d) { return d; })
+					   .attr("x", 0)
+				 	   .attr("y", function (d, i) { return 50+i*y_dis; })
+					   .style("text-anchor", "end")
+		               .style("font-size", 14);
+	var timeLabels = svg.selectAll(".timeLabel")
+        		        .data(times)
+        			    .enter().append("text")
+        				.text(function(d) { return d; })
+        				.attr("x", function(d, i) { return 50+i*x_dis; })
+        				.attr("y", 0)
+        				.style("text-anchor", "middle")
+						.style("font-size", 14);
 	svg.append("g")
 	   .attr("class", "cons1")
 	   .selectAll("g")

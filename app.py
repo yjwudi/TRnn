@@ -33,7 +33,6 @@ def read_triangle_file(fname):
 		head = f.readline()
 		data = f.readlines()
 		head = data[0].split()
-		print(head[0], head[1])
 		point_num = int(head[0])
 		tri_num = int(head[1])
 		for i in range(1, point_num+1):

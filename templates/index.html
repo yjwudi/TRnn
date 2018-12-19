@@ -23,12 +23,7 @@
 			function startRender(){
 				var map_data = JSON.parse('{{ geo | tojson | safe}}');
 				threeStart(map_data);
-				// var cluster_num = map_data.cluster_num;
-				// var selid = document.getElementById("sid");
-				//  for(var i=0; i<cluster_num;i++){
-				//      selid.option[i] = new Option(toString(i),toString(i));
-				//      console.log(toString(i),toString(i));
-				//  }
+
 				var plot_width = 500, plot_height = 500;
 				showScatter(520, 400);
 				showPCP(850, 450, map_data);
@@ -70,7 +65,7 @@
 			#canvas3d {
 				border: none;
 	            width: 80%;
-	            height: 800px;
+	            height: 600px;
 				margin-left: auto;
 				margin-right: auto;
 				text-align:center;

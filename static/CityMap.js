@@ -8,6 +8,7 @@ var map_data, cluster_sum;
 var group, camera, scene, renderer, controls;
 var agent_pos_array = new Array();
 var agent_line_array = new Array();
+var test, test1;
 
 function threeStart(new_map_data)
 {
@@ -41,8 +42,6 @@ function init()
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( width, height );
 	renderer.setClearColor('rgb(255,255,255)',1.0);
-	// renderer.setClearColor('rgb(135,206,250)',1.0);  
-	// renderer.setClearColor(0xff0000,1.0);
 	document.getElementById('canvas3d').appendChild( renderer.domElement );
 
 	// camera
@@ -101,6 +100,7 @@ function init()
     var river_material = new THREE.MeshBasicMaterial({color: 0x84bfe8});
 	var river_mesh = new THREE.Mesh(river_geomotry, river_material);
 	scene.add(river_mesh);
+	test = river_mesh;
 	console.log('river added he');
 
 
@@ -117,6 +117,7 @@ function init()
 	var city_material = new THREE.PointsMaterial({color: 0x4a708b});
 	var city_mesh = new THREE.Points(city_geomotry, city_material);
 	scene.add(city_mesh);
+	test1 = city_mesh;
 	console.log('city added');
 
 	var shelter_vertices = map_data.shelter_vertices;
@@ -174,12 +175,36 @@ function onDocumentMouseDown( event ) {//按下鼠标
 	mousey = last_mousey = event.clientY;
 	console.log('mousex', mousex);
 	console.log('mousey', mousey);
+
+	var winWidth = 1327, winHeight = 600;
+
+	var Sx = event.clientX-175;//鼠标单击位置横坐标
+	var Sy = event.clientY-39;//鼠标单击位置纵坐标
+	//屏幕坐标转标准设备坐标
+	console.log('window.innerWidth, window.innerHeight',window.innerWidth, window.innerHeight);
+	var x = ( Sx / winWidth ) * 2 - 1;//标准设备横坐标
+	var y = -( Sy / winHeight ) * 2 + 1;//标准设备纵坐标
+	var standardVector  = new THREE.Vector3(x, y, 0.5);//标准设备坐标
+	//标准设备坐标转世界坐标
+	var worldVector = standardVector.unproject(camera);
+	console.log('x:',x,', y:',y);
+	console.log('x:',worldVector.x,', y:',worldVector.y,', z:',worldVector.z);
+
+	// var tmp = new THREE.Vector3(1605,-490,0);
+	var tmp = new THREE.Vector3(-3342,-434,0);
+	var vector = tmp.project(camera);
+	console.log(vector);
+	vector.x = Math.round( (   vector.x + 1 ) * winWidth  / 2 ),
+	vector.y = Math.round( ( - vector.y + 1 ) * winHeight / 2 );
+	vector.z = 0;
+	console.log(Sx, Sy);
+	console.log(vector);
 }
 
 function onDocumentMouseMove( event ) {//移动鼠标
 	mousex = event.clientX;
 	mousey = event.clientY;
-	console.log('mousex', mousex, 'last_mousex', last_mousex);
+	// console.log('mousex', mousex, 'last_mousex', last_mousex);
 	var deltax = mousex-last_mousex, deltay = mousey-last_mousey;
 	lastx = camera.position.x, lasty = camera.position.y;
 	newx = -deltax+lastx, newy = deltay+lasty;
@@ -188,7 +213,7 @@ function onDocumentMouseMove( event ) {//移动鼠标
 	camera.position.y = newy;
 	camera.lookAt.x = lookx;
 	camera.lookAt.y = looky;
-	console.log('moving ', newx, newy);
+	// console.log('moving ', newx, newy);
 	// camera.updateProjectionMatrix();
 	renderer.render(scene, camera);
 	last_mousex = mousex, last_mousey = mousey;
@@ -209,7 +234,6 @@ function onDocumentMouseOut( event ) {//移走鼠标
 
 function mousewheel(e) {
 	e.preventDefault();
-	//e.stopPropagation();
 	if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件
 		if (e.wheelDelta > 0) { //当滑轮向上滚动时
 			fov -= (near < fov ? 1 : 0);
@@ -228,7 +252,6 @@ function mousewheel(e) {
 	camera.fov = fov;
 	camera.updateProjectionMatrix();
 	renderer.render(scene, camera);
-	//updateinfo();
 }
 
 function loadHighEntropyRoad()
@@ -361,10 +384,9 @@ function showSingleAgent(target_idx)
 {
 	if(target_idx == -1)
 		target_idx = parseInt(document.getElementById('show_num_input').value);
+	console.log('target_idx', target_idx);
 	var agent_pos_array = map_data.selected_traj;
 	var cluster_id_array = map_data.selected_cluster_id;
-	var sum = 0;
-	// console.log(cluster_id_array);
 	for(var i = 0; i < agent_pos_array.length; i++)
 	{
 		var material = new THREE.LineBasicMaterial({color:0xff0000});

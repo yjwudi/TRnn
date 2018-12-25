@@ -163,7 +163,8 @@ function init()
 	window.addEventListener( 'resize', onWindowResize, false );
 
 }
-
+//点击坐标-》屏幕相对坐标
+//地图坐标-》设备坐标-》屏幕相对坐标
 function onDocumentMouseDown( event ) {//按下鼠标
 	event.preventDefault();
 	//鼠标监听
@@ -173,32 +174,65 @@ function onDocumentMouseDown( event ) {//按下鼠标
 
 	mousex = last_mousex = event.clientX;
 	mousey = last_mousey = event.clientY;
-	console.log('mousex', mousex);
-	console.log('mousey', mousey);
+	console.log('mousex, mousey', mousex, mousey);
 
-	var winWidth = 1327, winHeight = 600;
+	var winWidth = document.getElementById('canvas3d').clientWidth;
+	var winHeight = document.getElementById('canvas3d').clientHeight;
 
 	var Sx = event.clientX-175;//鼠标单击位置横坐标
 	var Sy = event.clientY-39;//鼠标单击位置纵坐标
-	//屏幕坐标转标准设备坐标
-	console.log('window.innerWidth, window.innerHeight',window.innerWidth, window.innerHeight);
-	var x = ( Sx / winWidth ) * 2 - 1;//标准设备横坐标
-	var y = -( Sy / winHeight ) * 2 + 1;//标准设备纵坐标
-	var standardVector  = new THREE.Vector3(x, y, 0.5);//标准设备坐标
-	//标准设备坐标转世界坐标
-	var worldVector = standardVector.unproject(camera);
-	console.log('x:',x,', y:',y);
-	console.log('x:',worldVector.x,', y:',worldVector.y,', z:',worldVector.z);
+	console.log('相对坐标:', Sx, Sy);
 
-	// var tmp = new THREE.Vector3(1605,-490,0);
-	var tmp = new THREE.Vector3(-3342,-434,0);
-	var vector = tmp.project(camera);
-	console.log(vector);
-	vector.x = Math.round( (   vector.x + 1 ) * winWidth  / 2 ),
-	vector.y = Math.round( ( - vector.y + 1 ) * winHeight / 2 );
-	vector.z = 0;
-	console.log(Sx, Sy);
-	console.log(vector);
+	var x_move = 5391, y_move = 61852.5;
+	var x = biSearch(580-x_move, 10200-x_move, Sx, 0)+x_move;
+	var y = biSearch(59205-y_move, 64500-y_move, Sy, 1)+y_move;
+	console.log('x, y', x, y);
+
+	// // 屏幕坐标转标准设备坐标
+	// var targetx = ( Sx / winWidth ) * 2 - 1;//标准设备横坐标
+	// var targety = -( Sy / winHeight ) * 2 + 1;//标准设备纵坐标
+	// var standardVector  = new THREE.Vector3(targetx, targety, 0.5);//标准设备坐标
+	// console.log('设备坐标:',standardVector);
+	// //标准设备坐标转世界坐标
+	// var worldVector = standardVector.unproject(camera);
+	// console.log('世界坐标:',worldVector);
+	// // var tmp = new THREE.Vector3(1605,-490,0);
+	// for(var i = 0; i < 10; i++) {
+    //     var tmp = new THREE.Vector3(-3342+10*i, -434, 0);
+    //     var vector = tmp.project(camera);
+    //     console.log(vector);
+    //     vector.x = Math.round((vector.x + 1) * winWidth / 2);
+    //     vector.y = Math.round((-vector.y + 1) * winHeight / 2);
+    //     vector.z = 0;
+    //     console.log(vector);
+    // }
+}
+function biSearch(l, r, target, type){
+	var winWidth = document.getElementById('canvas3d').clientWidth;
+	var winHeight = document.getElementById('canvas3d').clientHeight;
+	var device_coor;
+	while(r-l>0.1){
+		var m = (l+r)/2.0;
+		var tmp = new THREE.Vector3(m, 0, 0);
+		if(type==1){
+			tmp = new THREE.Vector3(0, m, 0);
+		}
+		var vector = tmp.project(camera);
+		if(type==0) {
+            device_coor = Math.round((vector.x + 1) * winWidth / 2);
+            if (device_coor < target)
+                l = m;
+            else
+                r = m;
+        } else {
+			device_coor = Math.round((-vector.y + 1) * winHeight / 2);
+			if(device_coor < target)
+				r = m;
+			else
+				l = m;
+		}
+	}
+	return l;
 }
 
 function onDocumentMouseMove( event ) {//移动鼠标
@@ -387,6 +421,7 @@ function showSingleAgent(target_idx)
 	console.log('target_idx', target_idx);
 	var agent_pos_array = map_data.selected_traj;
 	var cluster_id_array = map_data.selected_cluster_id;
+	var points = [];
 	for(var i = 0; i < agent_pos_array.length; i++)
 	{
 		var material = new THREE.LineBasicMaterial({color:0xff0000});
@@ -432,6 +467,7 @@ function showSingleAgent(target_idx)
 	    agent_line_array[i] = line;
 	    scene.add(line);
 	}
+
 }
 function loadAgent() 
 {

@@ -11,6 +11,7 @@
 		<script src="static/three-js/examples/js/geometries/ConvexGeometry.js"></script>
 		<script src="static/three-js/examples/js/Detector.js"></script>
 		<script src="static/three-js/examples/js/libs/stats.min.js"></script>
+		<script src="static/heatmap-js/build/heatmap.js"></script>
 		<script src="static/CityMap.js"></script>
 		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 		<script src="https://d3js.org/d3-path.v1.min.js"></script>
@@ -40,7 +41,6 @@
 					}
 				}
 				showLineChart(class_time_arr);
-				showHeatMap();
 			}
 		</script>
 		<link rel="stylesheet" href="static/scatter.css" charset="utf-8">
@@ -92,6 +92,7 @@
 			<input type="text" id="show_num_input" />
 			<input type="button" value="show" id="show_single_btn" onclick="showSingleAgent(-1);" />
 			<input type="button" value="clear" id="clear_btn" onclick="clearAgent();" />
+			<input type="button" value="heatmap" id="heatmap_btn" onclick="showHeatMap();" />
 		</div>
 		<div id="canvas3d"></div>
 		<div>

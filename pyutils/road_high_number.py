@@ -1,8 +1,8 @@
-from pyutils.global_variable import cluster_num
+from pyutils.global_variable import cluster_num, id_file, cluster_file
 
 agent_road_file = 'Data/agent_path/agent_road_0.txt'
-selected_id_file = 'Data/agent_path/selected.txt'
-selected_cluster_file = 'Data/agent_path/selected_cluster_1.txt'
+selected_id_file = id_file #'Data/agent_path/selected.txt'
+selected_cluster_file = cluster_file #'Data/agent_path/selected_cluster_1.txt'
 outfile = 'static/road_number.tsv'
 
 '''

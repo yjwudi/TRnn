@@ -167,11 +167,14 @@ def load_data():
 
     ce_road_num = 1200
     ce_road_arr =[]
+    ce_road_value = []
     for i in range(min(ce_road_num,len(ce_dict))):
     	ce_road_arr.append(ce_dict[i][0])
-    	# print(road_dict[ce_dict[i][0]])
+    	ce_road_value.append(ce_dict[i][1])
+    print(ce_road_value)
     connections, circles, road_time_num = road_theme_variation(ce_road_arr, road_high_number_set)
     city_map['ce_road_arr'] = ce_road_arr
+    city_map['ce_road_value'] = ce_road_value
     city_map['connections'] = connections
     city_map['circles'] = circles
     city_map['road_time_num'] = road_time_num

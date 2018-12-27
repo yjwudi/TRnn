@@ -8,6 +8,8 @@ var map_data, cluster_sum;
 var group, camera, scene, renderer, controls;
 var agent_pos_array = new Array();
 var agent_line_array = new Array();
+var agent_start_array = new Array();
+var agent_end_array = new Array();
 var test, test1;
 
 function threeStart(new_map_data)
@@ -17,6 +19,7 @@ function threeStart(new_map_data)
 	init();
 	animate();
 	loadAgent();
+	// showHeatMap();
 	// loadRoad();
 	// loadHighEntropyRoad();
 	// loadAgentRoad();
@@ -25,6 +28,12 @@ function threeStart(new_map_data)
 function clearAgent(){
 	for(var i = 0; i < agent_line_array.length; i++){
 		scene.remove(agent_line_array[i]);
+	}
+	for(var i = 0; i < agent_start_array.length; i++){
+		scene.remove(agent_start_array[i]);
+	}
+	for(var i = 0; i < agent_end_array.length; i++){
+		scene.remove(agent_end_array[i]);
 	}
 }
 
@@ -163,6 +172,64 @@ function init()
 	window.addEventListener( 'resize', onWindowResize, false );
 
 }
+
+function showHeatMap(){
+	var ce_road_arr = map_data.ce_road_arr;
+	var ce_road_value = map_data.ce_road_value;
+	var maxv = 0;
+	var points = [];
+	var heatmapInstance = h337.create({
+	  // only container is required, the rest will be defaults
+	  container: document.getElementById('canvas3d')
+	});
+	for(var i = 0; i < Math.min(100,ce_road_value.length); i++){
+		var idx = parseInt(ce_road_arr[i]), val = parseFloat(ce_road_value[i]);
+		maxv = Math.max(maxv, val);
+		var coordinate = getRoadCoor(idx);
+		var winWidth = document.getElementById('canvas3d').clientWidth;
+		var winHeight = document.getElementById('canvas3d').clientHeight;
+		var tmp = new THREE.Vector3(coordinate.x, coordinate.y, 0);
+		var vector = tmp.project(camera);
+		var xv = Math.round((vector.x + 1) * winWidth / 2);
+		var yv = Math.round((-vector.y + 1) * winHeight / 2);
+		// console.log('co.x, co.y', coordinate.x, coordinate.y);
+		// console.log('xv, yv', xv, yv);
+		var point = {
+			x: xv,
+			y: yv,
+			value: val
+  		};
+		points.push(point);
+		// addRoad(idx);
+		// break;
+	}
+	var data = {
+	  max: maxv,
+	  data: points
+	};
+	var nuConfig = {
+	  radius: 10,
+	  maxOpacity: .5,
+	  minOpacity: 0,
+	  blur: .75
+	};
+	heatmapInstance.configure(nuConfig);
+	heatmapInstance.setData(data);
+}
+
+function getRoadCoor(idx){
+	var road_vertices = map_data.road_vertices;
+	var road_lines = map_data.road_lines;
+
+	var line = road_lines[idx];
+	var idx1 = parseInt(line[0]), idx2 = parseInt(line[1]);
+	var p1 = road_vertices[idx1], p2 = road_vertices[idx2];
+	var x = (parseFloat(p1[0])+parseFloat(p2[0]))/2.0;
+	var y = (parseFloat(p1[1])+parseFloat(p2[1]))/2.0;
+	var point = {x:x, y:y};
+	return point;
+}
+
 //点击坐标-》屏幕相对坐标
 //地图坐标-》设备坐标-》屏幕相对坐标
 function onDocumentMouseDown( event ) {//按下鼠标
@@ -175,9 +242,6 @@ function onDocumentMouseDown( event ) {//按下鼠标
 	mousex = last_mousex = event.clientX;
 	mousey = last_mousey = event.clientY;
 	console.log('mousex, mousey', mousex, mousey);
-
-	var winWidth = document.getElementById('canvas3d').clientWidth;
-	var winHeight = document.getElementById('canvas3d').clientHeight;
 
 	var Sx = event.clientX-175;//鼠标单击位置横坐标
 	var Sy = event.clientY-39;//鼠标单击位置纵坐标
@@ -422,15 +486,48 @@ function showSingleAgent(target_idx)
 	var agent_pos_array = map_data.selected_traj;
 	var cluster_id_array = map_data.selected_cluster_id;
 	var points = [];
-	for(var i = 0; i < agent_pos_array.length; i++)
-	{
-		var material = new THREE.LineBasicMaterial({color:0xff0000});
+	for(var i = 0; i < agent_pos_array.length; i++){
 		var cluster_idx = parseInt(cluster_id_array[i]);
 		if(cluster_idx!=target_idx) {
 		    continue;
         }
-		switch(cluster_idx)
-		{
+		var material = getMaterial(cluster_idx);
+	    var geometry = new THREE.Geometry();
+	    for(var j = 0; j < agent_pos_array[i].length; j++)
+	    {
+	    	var p = new THREE.Vector3(parseFloat(agent_pos_array[i][j][0]), parseFloat(agent_pos_array[i][j][1]), parseFloat(agent_pos_array[i][j][2]));
+	    	geometry.vertices.push(p);
+	    }
+	    var line = new THREE.Line(geometry, material);
+	    scene.remove(agent_line_array[i]);
+	    agent_line_array[i] = line;
+	    scene.add(line);
+
+	    //start, end point
+		// var start_point = getPoint(agent_pos_array[i][0],0xf5deb3);
+		// scene.remove(agent_start_array[i]);
+		// agent_start_array[i] = start_point;
+		// scene.add(start_point);
+		var end_point = getPoint(agent_pos_array[i][agent_pos_array[i].length-1],0xff8c00);
+		scene.remove(agent_end_array[i]);
+		agent_end_array[i] = end_point;
+		scene.add(end_point);
+	}
+
+}
+
+function getPoint(point, color_){
+	var start_geo = new THREE.Geometry();
+	var start_vec = new THREE.Vector3(parseFloat(point[0]), parseFloat(point[1]), parseFloat(point[2]));
+	start_geo.vertices.push(start_vec);
+	var start_material = new THREE.PointsMaterial( { color: color_, size:60 } );
+	var star_point = new THREE.Points( start_geo, start_material );
+	return star_point;
+}
+
+function getMaterial(cluster_idx){
+	var material = new THREE.LineBasicMaterial({color:0xff0000});
+	switch(cluster_idx){
 		case -1:
 			material = new THREE.LineBasicMaterial({color:0xffffff});
 			break;
@@ -455,20 +552,10 @@ function showSingleAgent(target_idx)
 		case 6:
 			material = new THREE.LineBasicMaterial({color:0xffd700});
 			break;
-		}
-	    var geometry = new THREE.Geometry();
-	    for(var j = 0; j < agent_pos_array[i].length; j++)
-	    {
-	    	var p = new THREE.Vector3(parseFloat(agent_pos_array[i][j][0]), parseFloat(agent_pos_array[i][j][1]), parseFloat(agent_pos_array[i][j][2]));
-	    	geometry.vertices.push(p);
-	    }
-	    var line = new THREE.Line(geometry, material);
-	    scene.remove(agent_line_array[i]);
-	    agent_line_array[i] = line;
-	    scene.add(line);
 	}
-
+	return material;
 }
+
 function loadAgent() 
 {
 	var cluster_num = map_data.cluster_num;

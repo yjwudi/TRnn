@@ -2,6 +2,7 @@ from sklearn.cluster import KMeans,estimate_bandwidth,MeanShift
 from sklearn.cluster import DBSCAN,AgglomerativeClustering
 import numpy as np
 from global_variable import cluster_num
+import datetime
 
 
 id_file = '../Data/agent_path/selected.txt'
@@ -13,10 +14,13 @@ feature_arr = np.loadtxt(feature_file)
 print(np.shape(id_arr))
 print(np.shape(feature_arr))
 
+start = datetime.datetime.now()
 kmeans_total = KMeans(n_clusters=cluster_num, random_state=0).fit(feature_arr)
+end = datetime.datetime.now()
+print (end-start)
 
 
-np.savetxt('../Data/agent_path/selected_cluster_1.txt', kmeans_total.labels_, fmt='%d')
+np.savetxt('../Data/agent_path/v2/selected_cluster_1.txt', kmeans_total.labels_, fmt='%d')
 
 # PCA
 from sklearn.manifold import TSNE

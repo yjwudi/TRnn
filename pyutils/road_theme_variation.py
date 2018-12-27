@@ -45,6 +45,8 @@ def road_theme_variation(road_arr, high_num_arr):
 				for j in range(len(roads)):
 					road = roads[j]
 					if road not in road_time:
+						if road==299683:
+							print('299683 exits')
 						road_time[road] = []
 						road_id[road] = []
 					road_time[road].append(times[j])

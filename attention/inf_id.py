@@ -8,11 +8,13 @@ import unicodedata
 import string
 import re
 import random
+import os
 
 import torch
 import torch.nn as nn
 from torch import optim
 import torch.nn.functional as F
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 MAX_LENGTH = 50
 save_path = 'mse_noattn_train_logs'
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -30,8 +32,8 @@ iteration = 1000000
 
 
 fname = '../Data/agent_path/agent_road_0_new.txt'
-id_file = '../Data/agent_path/selected.txt'
-feature_file = '../Data/agent_path/selected_feature.txt'
+id_file = '../Data/agent_path/v2/selected.txt'
+feature_file = '../Data/agent_path/v2/selected_feature_no_attn.txt'
 
 agent_id = []
 agent_path = []

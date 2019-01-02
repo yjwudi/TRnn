@@ -16,7 +16,7 @@ from torch import optim
 import torch.nn.functional as F
 os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 MAX_LENGTH = 50
-save_path = 'mse_noattn_train_logs'
+save_path = 'mse_train_logs'
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # device = torch.device("cpu")
 teacher_forcing_ratio = 0.5
@@ -32,8 +32,8 @@ iteration = 1000000
 
 
 fname = '../Data/agent_path/agent_road_0_new.txt'
-id_file = '../Data/agent_path/v2/selected.txt'
-feature_file = '../Data/agent_path/v2/selected_feature_no_attn.txt'
+id_file = '../Data/agent_path/v3/selected.txt'
+feature_file = '../Data/agent_path/v3/selected_feature.txt'
 
 agent_id = []
 agent_path = []

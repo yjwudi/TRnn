@@ -241,16 +241,16 @@ function onDocumentMouseDown( event ) {//按下鼠标
 
 	mousex = last_mousex = event.clientX;
 	mousey = last_mousey = event.clientY;
-	console.log('mousex, mousey', mousex, mousey);
+	// console.log('mousex, mousey', mousex, mousey);
 
 	var Sx = event.clientX-175;//鼠标单击位置横坐标
 	var Sy = event.clientY-39;//鼠标单击位置纵坐标
-	console.log('相对坐标:', Sx, Sy);
+	// console.log('相对坐标:', Sx, Sy);
 
 	var x_move = 5391, y_move = 61852.5;
 	var x = biSearch(580-x_move, 10200-x_move, Sx, 0)+x_move;
 	var y = biSearch(59205-y_move, 64500-y_move, Sy, 1)+y_move;
-	console.log('x, y', x, y);
+	// console.log('x, y', x, y);
 
 	// // 屏幕坐标转标准设备坐标
 	// var targetx = ( Sx / winWidth ) * 2 - 1;//标准设备横坐标

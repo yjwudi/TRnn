@@ -41,7 +41,7 @@ function showScatter(plot_width, plot_height) {
       .style("opacity", 0);
 
   // load data
-  d3.csv("static/cluster.csv", function(error, data) {
+  d3.csv("static/cluster3.csv", function(error, data) {
 
     // change string (from CSV) into number format
     data.forEach(function(d) {

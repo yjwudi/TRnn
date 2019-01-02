@@ -283,7 +283,7 @@ def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, lear
             print_loss_total = 0
             print('%s (%d %d%%) %.6f\n' % (timeSince(start, iter / n_iters),
                                            iter, iter / n_iters * 100, print_loss_avg))
-            with open('logs_mse.txt', 'a') as f:
+            with open('logs_mse2.txt', 'a') as f:
                 f.write('%s (%d %d%%) %.6f\n' % (timeSince(start, iter / n_iters),
                                                  iter, iter / n_iters * 100, print_loss_avg))
 

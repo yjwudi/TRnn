@@ -1,24 +1,29 @@
-from sklearn.manifold import TSNE
-from sklearn.datasets import load_iris,load_digits
-from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
-import os
+import numpy as np
 
-digits = load_digits()
-print(digits.target)
-X_tsne = TSNE(n_components=2,random_state=33).fit_transform(digits.data)
-X_pca = PCA(n_components=2).fit_transform(digits.data)
+id_file = '../Data/agent_path/v1/selected.txt'
+cid_file = '../Data/agent_path/v1/selected_cluster_1.txt'
+feature_file = '../Data/agent_path/v1/selected_feature.txt'
 
-ckpt_dir="images"
-if not os.path.exists(ckpt_dir):
-    os.makedirs(ckpt_dir)
+id_arr = np.loadtxt(id_file)
+cid_arr = np.loadtxt(cid_file)
+feature_arr = np.loadtxt(feature_file)
 
-plt.figure(figsize=(10, 5))
-plt.subplot(121)
-plt.scatter(X_tsne[:, 0], X_tsne[:, 1], label="t-SNE")
-plt.legend()
-plt.subplot(122)
-plt.scatter(X_pca[:, 0], X_pca[:, 1], label="PCA")
-plt.legend()
-plt.savefig('images/digits_tsne-pca.png', dpi=120)
-plt.show()
+new_id_arr = []
+new_cid_arr = []
+new_feature_arr = []
+
+for i in range(len(id_arr)):
+    if cid_arr[i]==2 or cid_arr[i]==4:
+        new_id_arr.append(id_arr[i])
+        new_feature_arr.append(feature_arr[i])
+for i in range(len(id_arr)):
+    if cid_arr[i]==2:
+        new_cid_arr.append(0)
+    if cid_arr[i] == 4:
+        new_cid_arr.append(1)
+
+
+np.savetxt('../Data/agent_path/vv/selected.txt', new_id_arr, fmt='%d')
+np.savetxt('../Data/agent_path/vv/selected_cluster_1.txt', new_cid_arr, fmt='%d')
+np.savetxt('../Data/agent_path/vv/selected_feature.txt', new_feature_arr)
+

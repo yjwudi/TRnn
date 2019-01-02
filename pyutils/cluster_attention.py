@@ -5,8 +5,8 @@ from global_variable import cluster_num
 import datetime
 
 
-id_file = '../Data/agent_path/selected.txt'
-feature_file = '../Data/agent_path/selected_feature.txt'
+id_file = '../Data/agent_path/v1/selected.txt'
+feature_file = '../Data/agent_path/v1/selected_feature.txt'
 
 
 id_arr = np.loadtxt(id_file)
@@ -20,7 +20,7 @@ end = datetime.datetime.now()
 print (end-start)
 
 
-np.savetxt('../Data/agent_path/v2/selected_cluster_1.txt', kmeans_total.labels_, fmt='%d')
+np.savetxt('../Data/agent_path/v1/selected_cluster_1.txt', kmeans_total.labels_, fmt='%d')
 
 # PCA
 from sklearn.manifold import TSNE
@@ -36,7 +36,7 @@ kmeans_1 = KMeans(n_clusters=cluster_num, random_state=0).fit(feature_arr)
 plt.figure(figsize=(10, 5))
 plt.scatter(X_pca[:, 0], X_pca[:, 1], c =kmeans_1.labels_, label="PCA")
 print(np.shape(X_pca))
-fname = '../static/cluster.csv'
+fname = '../static/cluster1.csv'
 with open(fname,'w') as f:
 	f.write('x,y,c\n')
 	for i in range(len(X_pca)):

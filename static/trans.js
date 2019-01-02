@@ -163,13 +163,22 @@ function showPCP(plot_width, plot_height, map_data) {
 	   		  .enter()
 	   		  .append("g")
 	   		  .each(function(d2, i2){
+	   		  	console.log('cccc');
 	   		  	var y1 = 50+i2*y_dis;
 	   		  	d3.select(this)
 	   		  	  .append('circle')
 	   		  	  .attr("cx", x1)
 	   		  	  .attr("cy", y1)
 	   		  	  .attr("r", radius_)
-	   		  	  .style("fill", d=>colorScale(d2))
+		          .attr("xlink:href", "imgg/du_64.png")
+	   		  	  .style("fill", colorScale(d2));
+	   		  	d3.select(this)
+					.append('svg:image')
+					.attr("x", x1-10)
+					.attr("y", y1-10)
+					.attr('width', 20)
+					.attr('height', 24)
+					.attr("xlink:href", "static/img/du_64.png");
 	   		  })
 	   });
 

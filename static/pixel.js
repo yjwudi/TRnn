@@ -12,8 +12,8 @@ function showPixel(map_data){
       datasets = ["static/road_number.tsv"],
       cluster_num = map_data.cluster_num;
 
-  for(var i = 0; i < cluster_num; i++){
-		days[i] = i.toString();
+  for(var i = 1; i <= cluster_num; i++){
+		days[i-1] = i.toString();
 	}
 
 
@@ -34,14 +34,14 @@ function showPixel(map_data){
       .attr("transform", "translate(-6," + gridSize / 1.5 + ")");
         // .attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
 
-  var timeLabels = svg.selectAll(".timeLabel")
-        .data(times)
-        .enter().append("text")
-        .text(function(d) { return d; })
-        .attr("x", function(d, i) { return i * gridSize; })
-        .attr("y", 0)
-        .style("text-anchor", "middle")
-        .attr("transform", "translate(" + gridSize / 2 + ", -6)");
+  // var timeLabels = svg.selectAll(".timeLabel")
+  //       .data(times)
+  //       .enter().append("text")
+  //       .text(function(d) { return d; })
+  //       .attr("x", function(d, i) { return i * gridSize; })
+  //       .attr("y", 0)
+  //       .style("text-anchor", "middle")
+  //       .attr("transform", "translate(" + gridSize / 2 + ", -6)");
         // .attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
 
   var heatmapChart = function(tsvFile) {
@@ -96,7 +96,7 @@ function showPixel(map_data){
 
       legend.append("rect")
         .attr("x", function(d, i) { return legendElementWidth * i; })
-        .attr("y", gridSize*6)
+        .attr("y", gridSize*(cluster_num+1))
         .attr("width", legendElementWidth)
         .attr("height", gridSize / 2)
         .style("fill", function(d, i) { return colors[i]; });
@@ -105,7 +105,7 @@ function showPixel(map_data){
         .attr("class", "mono")
         .text(function(d) { return "≥ " + Math.round(d); })
         .attr("x", function(d, i) { return legendElementWidth * i; })
-        .attr("y", gridSize*6 + gridSize);
+        .attr("y", gridSize*(cluster_num+1) + gridSize);
 
       legend.exit().remove();
 

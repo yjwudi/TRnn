@@ -23,8 +23,8 @@ function showPCP(plot_width, plot_height, map_data) {
 		]];
 	var days = new Array();
 	var times = ["t1", "t2", "t3", "t4", "t5", "t6"];
-	for(var i = 0; i < cluster_num; i++){
-		days[i] = i.toString();
+	for(var i = 1; i <= cluster_num; i++){
+		days[i-1] = i.toString();
 	}
 
 	var tmpArray =connections.join(",").split(",");
@@ -42,7 +42,7 @@ function showPCP(plot_width, plot_height, map_data) {
 					   .attr("x", 0)
 				 	   .attr("y", function (d, i) { return 50+i*y_dis; })
 					   .style("text-anchor", "end")
-		               .style("font-size", 14);
+		               .style("font-size", 16);
 	var timeLabels = svg.selectAll(".timeLabel")
         		        .data(times)
         			    .enter().append("text")
@@ -50,7 +50,7 @@ function showPCP(plot_width, plot_height, map_data) {
         				.attr("x", function(d, i) { return 50+i*x_dis; })
         				.attr("y", 0)
         				.style("text-anchor", "middle")
-						.style("font-size", 14);
+						.style("font-size", 16);
 	svg.append("g")
 	   .attr("class", "cons1")
 	   .selectAll("g")
@@ -172,13 +172,13 @@ function showPCP(plot_width, plot_height, map_data) {
 	   		  	  .attr("r", radius_)
 		          .attr("xlink:href", "imgg/du_64.png")
 	   		  	  .style("fill", colorScale(d2));
-	   		  	d3.select(this)
-					.append('svg:image')
-					.attr("x", x1-10)
-					.attr("y", y1-10)
-					.attr('width', 20)
-					.attr('height', 24)
-					.attr("xlink:href", "static/img/du_64.png");
+			// d3.select(this)
+			// 	.append('svg:image')
+			// 	.attr("x", x1-10)
+			// 	.attr("y", y1-10)
+			// 	.attr('width', 20)
+			// 	.attr('height', 24)
+			// 	.attr("xlink:href", "static/img/du_64.png");
 	   		  })
 	   });
 
@@ -190,7 +190,7 @@ function showPCP(plot_width, plot_height, map_data) {
 
       legend.append("rect")
         .attr("x", function(d, i) { return legendElementWidth * i+50; })
-        .attr("y", h)
+        .attr("y", y_dis*cluster_num+20)
         .attr("width", legendElementWidth)
         .attr("height", legendElementHeight)
         .style("fill", function(d, i) { return colors[i]; });

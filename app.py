@@ -5,6 +5,7 @@ from pyutils.road_topic_probability_v2 import road_topic_prob
 from pyutils.road_theme_variation import road_theme_variation
 from pyutils.road_high_number import road_high_number
 from datetime import timedelta
+from pyutils.global_variable import pca_file
 from pyutils.global_variable import cluster_num
 from pyutils.global_variable import id_file as selected_id_file
 from pyutils.global_variable import cluster_file as selected_cluster_file
@@ -191,6 +192,7 @@ def load_data():
     city_map['agent_id'] = agent_id
     city_map['agent_road'] = agent_road
     city_map['cluster_num'] = cluster_num
+    city_map['pca_file'] = pca_file
 
 
 @app.context_processor

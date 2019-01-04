@@ -1,15 +1,15 @@
 function showLineChart(class_time_arr) {
     var parseDate = d3.time.format("%m/%d/%Y").parse;
-    var margin = {left: 50, right: 20, top: 20, bottom: 100 };
+    var margin = {left: 40, right: 20, top: 20, bottom: 30 };
 
-    var width = 400 - margin.left - margin.right;
-    var height = 300 - margin.top - margin.bottom;
+    var width = 520 - margin.left - margin.right;
+    var height = 400 - margin.top - margin.bottom;
     var max = 0;
     var xNudge = 50;
     var yNudge = 20;
     var minDate = new Date();
     var maxDate = new Date();
-    var colors = ["#ff0000", "#00ff00", "#0000ff", "#836fff", "#8b008b", "#ff6a6a"];
+    var colors = ["#ff0000","#006400","#0000ff","#836fff","#8b008b","#ff6a6a","#ffd700"];
 
     d3.csv("static/prices.csv")
         .row(function(d) { return { month: parseDate(d.month), price: Number(d.price.trim().slice(1))}; })

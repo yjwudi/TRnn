@@ -1,5 +1,8 @@
+#encoding=utf-8
+'''
+把某些类筛掉
+'''
 import numpy as np
-
 id_file = '../Data/agent_path/v1/selected.txt'
 cid_file = '../Data/agent_path/v1/selected_cluster_1.txt'
 feature_file = '../Data/agent_path/v1/selected_feature.txt'

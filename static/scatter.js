@@ -1,8 +1,15 @@
-function showScatter(plot_width, plot_height) {
+function showScatter(plot_width, plot_height, map_data) {
 
   var margin = {top: 20, right: 20, bottom: 30, left: 40},
       width = plot_width - margin.left - margin.right,
       height = plot_height - margin.top - margin.bottom;
+  var pca_file = map_data.pca_file;
+  var ori_colors = ["#ff0000","#006400","#0000ff","#836fff","#8b008b","#ff6a6a","#ffd700"];
+  var cluster_num = map_data.cluster_num;
+  var colors = new Array();
+  for(var i = 0; i < cluster_num; i++){
+    colors[i] = ori_colors[i];
+  }
 
   /* 
    * value accessor - returns the value to encode for a given data object.
@@ -41,18 +48,19 @@ function showScatter(plot_width, plot_height) {
       .style("opacity", 0);
 
   // load data
-  d3.csv("static/cluster3.csv", function(error, data) {
+  d3.csv(pca_file, function(error, data) {
 
     // change string (from CSV) into number format
     data.forEach(function(d) {
       d.x = +d.x;
       d["y"] = +d["y"];
-      // console.log(d);
+      d.c = +d.c;
     });
 
+    var diff = 0.5;
     // don't want dots overlapping axis, so add in buffer to data domain
-    xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
-    yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
+    xScale.domain([d3.min(data, xValue)-diff, d3.max(data, xValue)+diff]);
+    yScale.domain([d3.min(data, yValue)-diff, d3.max(data, yValue)+diff]);
 
     // x-axis
     svg.append("g")
@@ -86,7 +94,7 @@ function showScatter(plot_width, plot_height) {
         .attr("r", 3.5)
         .attr("cx", xMap)
         .attr("cy", yMap)
-        .style("fill", function(d) { return color(cValue(d));}) 
+        .style("fill", function(d) { return colors[cValue(d)];})
         .on("mouseover", function(d) {
             tooltip.transition()
                  .duration(200)
@@ -104,7 +112,7 @@ function showScatter(plot_width, plot_height) {
 
     // draw legend
     var legend = svg.selectAll(".legend")
-                    .data(color.domain())
+                    .data(colors)//.data(color.domain())
                     .enter().append("g")
                     .attr("class", "legend")
                     .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
@@ -114,7 +122,7 @@ function showScatter(plot_width, plot_height) {
           .attr("x", width - 18)
           .attr("width", 18)
           .attr("height", 18)
-          .style("fill", color);
+          .style("fill", function(d, i) { return colors[i];});
 
     // draw legend text
     legend.append("text")
@@ -122,6 +130,6 @@ function showScatter(plot_width, plot_height) {
           .attr("y", 9)
           .attr("dy", ".35em")
           .style("text-anchor", "end")
-          .text(function(d) { return d;})
+          .text(function(d, i) { return i+1;})
   });
 }

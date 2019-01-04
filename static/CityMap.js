@@ -145,7 +145,7 @@ function init()
        shelter_geomotry.faces.push(f);
     }
     console.log(shelter_geomotry.vertices.length, shelter_geomotry.faces.length);
-    var shelter_material = new THREE.MeshBasicMaterial({color: 0x00fff0});
+    var shelter_material = new THREE.MeshBasicMaterial({color: 0x1f834a});
 	var shelter_mesh = new THREE.Mesh(shelter_geomotry, shelter_material);
 	scene.add(shelter_mesh);
 	console.log('shelter added');
@@ -535,7 +535,7 @@ function getMaterial(cluster_idx){
 			material = new THREE.LineBasicMaterial({color:0xff0000});
 			break;
 		case 1:
-			material = new THREE.LineBasicMaterial({color:0x00ff00});
+			material = new THREE.LineBasicMaterial({color:0x006400});
 			break;
 		case 2:
 			material = new THREE.LineBasicMaterial({color:0x0000ff});

@@ -3,12 +3,12 @@
 给定地理范围，找到出生点在这个范围内的agent的id并输出
 '''
 import numpy as np
-id_fname = '../Data/agent_path/v3/selected.txt'
+id_fname = '../Data/agent_path/all/selected.txt'
 agent_file = '../Data/agent_path/agent_pos_0.txt'
-x_lower = 4521
-x_upper = 4864
-y_lower = 61216
-y_upper = 61468
+x_lower = 0
+x_upper = 1000000
+y_lower = 0
+y_upper = 1000000
 
 agent_id = []
 with open(agent_file, 'r') as f:

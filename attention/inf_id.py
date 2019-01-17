@@ -32,8 +32,8 @@ iteration = 1000000
 
 
 fname = '../Data/agent_path/agent_road_0_new.txt'
-id_file = '../Data/agent_path/v3/selected.txt'
-feature_file = '../Data/agent_path/v3/selected_feature.txt'
+id_file = '../Data/agent_path/all/selected.txt'
+feature_file = '../Data/agent_path/all/selected_feature.txt'
 
 agent_id = []
 agent_path = []

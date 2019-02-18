@@ -163,7 +163,6 @@ function showPCP(plot_width, plot_height, map_data) {
 	   		  .enter()
 	   		  .append("g")
 	   		  .each(function(d2, i2){
-	   		  	console.log('cccc');
 	   		  	var y1 = 50+i2*y_dis;
 	   		  	d3.select(this)
 	   		  	  .append('circle')

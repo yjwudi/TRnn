@@ -55,36 +55,13 @@ function showScatter(plot_width, plot_height, map_data) {
       d.x = +d.x;
       d["y"] = +d["y"];
       d.c = +d.c;
+      d.id = +d.id;
     });
 
     var diff = 0.5;
     // don't want dots overlapping axis, so add in buffer to data domain
     xScale.domain([d3.min(data, xValue)-diff, d3.max(data, xValue)+diff]);
     yScale.domain([d3.min(data, yValue)-diff, d3.max(data, yValue)+diff]);
-
-    // x-axis
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("x", width)
-        .attr("y", -6)
-        .style("text-anchor", "end")
-        .text("x");
-
-    // y-axis
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
-      .append("text")
-        .attr("class", "label")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text("y");
 
     // draw dots
     svg.selectAll(".dot")
@@ -108,8 +85,35 @@ function showScatter(plot_width, plot_height, map_data) {
             tooltip.transition()
                  .duration(500)
                  .style("opacity", 0);
-        });
+        })
+        .on("click", function(d) {
+            console.log('clicked: '+d.id);
+            showAnAgent(d.id);
+            }
+          );
+    // x-axis
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", width)
+        .attr("y", -6)
+        .style("text-anchor", "end")
+        .text("x");
 
+    // y-axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("y");
     // draw legend
     var legend = svg.selectAll(".legend")
                     .data(colors)//.data(color.domain())

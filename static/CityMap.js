@@ -8,9 +8,13 @@ var map_data, cluster_sum;
 var group, camera, scene, renderer, controls;
 var agent_pos_array = new Array();
 var agent_line_array = new Array();
+var pca_agent_array = new Array();
 var agent_start_array = new Array();
 var agent_end_array = new Array();
+var pca_agent_end_array = new Array();
 var test, test1;
+var select_flag = 0;
+var regionx1, regiony1, regionx2, regiony2;
 
 function threeStart(new_map_data)
 {
@@ -28,6 +32,12 @@ function threeStart(new_map_data)
 function clearAgent(){
 	for(var i = 0; i < agent_line_array.length; i++){
 		scene.remove(agent_line_array[i]);
+	}
+	for(var i = 0; i < pca_agent_array.length; i++){
+		scene.remove(pca_agent_array[i]);
+	}
+	for(var i = 0; i < pca_agent_end_array.length; i++){
+		scene.remove(pca_agent_end_array[i]);
 	}
 	for(var i = 0; i < agent_start_array.length; i++){
 		scene.remove(agent_start_array[i]);
@@ -233,6 +243,7 @@ function getRoadCoor(idx){
 //点击坐标-》屏幕相对坐标
 //地图坐标-》设备坐标-》屏幕相对坐标
 function onDocumentMouseDown( event ) {//按下鼠标
+	var select_cbox = document.getElementById("select_cbox");
 	event.preventDefault();
 	//鼠标监听
 	document.getElementById('canvas3d').addEventListener( 'mousemove', onDocumentMouseMove, false );
@@ -246,11 +257,43 @@ function onDocumentMouseDown( event ) {//按下鼠标
 	var Sx = event.clientX-175;//鼠标单击位置横坐标
 	var Sy = event.clientY-39;//鼠标单击位置纵坐标
 	// console.log('相对坐标:', Sx, Sy);
+	if(select_cbox.checked){
+		var x_move = 5391, y_move = 61852.5;
+		var x = biSearch(580-x_move, 10200-x_move, Sx, 0)+x_move;
+		var y = biSearch(59205-y_move, 64500-y_move, Sy, 1)+y_move;
+		console.log('checked x, y: ', x, y);
+		if(select_flag==0){
+			select_flag = 1;
+			regionx1 = x;
+			regiony1 = y;
+		}
+		else if(select_flag==1){
+			select_flag = 2;
+			regionx2 = x;
+			regiony2 = y;
+			//do something
+			$.ajax({
+                    type: 'POST',
+                    url:"/select_region",
+                    data:JSON.stringify({'regionx1':regionx1,'regiony1':regiony1,
+											   'regionx2':regionx2,'regiony2':regiony2}),
+					// dataType: 'json',
+                    contentType: 'application/json; charset=UTF-8',
+                    success:function(data){ //成功的话，得到消息
+                        clearAgent();
+                        map_data.selected_id = data.selected_id;
+                        map_data.selected_traj = data.selected_traj;
+                        map_data.selected_cluster_id = data.selected_cluster_id;
+                        map_data.cluster_num = 1;
+                        loadAgent();
+                    }
+                });
+		}
+	}
+	else{
+		select_flag = 0;
+	}
 
-	var x_move = 5391, y_move = 61852.5;
-	var x = biSearch(580-x_move, 10200-x_move, Sx, 0)+x_move;
-	var y = biSearch(59205-y_move, 64500-y_move, Sy, 1)+y_move;
-	// console.log('x, y', x, y);
 
 	// // 屏幕坐标转标准设备坐标
 	// var targetx = ( Sx / winWidth ) * 2 - 1;//标准设备横坐标
@@ -485,7 +528,6 @@ function showSingleAgent(target_idx)
 	console.log('target_idx', target_idx);
 	var agent_pos_array = map_data.selected_traj;
 	var cluster_id_array = map_data.selected_cluster_id;
-	var points = [];
 	for(var i = 0; i < agent_pos_array.length; i++){
 		var cluster_idx = parseInt(cluster_id_array[i]);
 		if(cluster_idx!=target_idx) {
@@ -503,14 +545,40 @@ function showSingleAgent(target_idx)
 	    agent_line_array[i] = line;
 	    scene.add(line);
 
-	    //start, end point
-		// var start_point = getPoint(agent_pos_array[i][0],0xf5deb3);
-		// scene.remove(agent_start_array[i]);
-		// agent_start_array[i] = start_point;
-		// scene.add(start_point);
 		var end_point = getPoint(agent_pos_array[i][agent_pos_array[i].length-1],0xff8c00);
 		scene.remove(agent_end_array[i]);
 		agent_end_array[i] = end_point;
+		scene.add(end_point);
+	}
+
+}
+function showAnAgent(target_idx)
+{
+	console.log('showAnAgent: '+target_idx);
+	var agent_pos_array = map_data.selected_traj;
+	var cluster_id_array = map_data.selected_cluster_id;
+	var selected_id = map_data.selected_id;
+	for(var i = 0; i < agent_pos_array.length; i++){
+		var cluster_idx = parseInt(cluster_id_array[i]);
+		var selected_idx = parseInt(selected_id[i]);
+		if(selected_idx!=target_idx) {
+		    continue;
+        }
+		var material = getMaterial(cluster_idx);
+	    var geometry = new THREE.Geometry();
+	    for(var j = 0; j < agent_pos_array[i].length; j++)
+	    {
+	    	var p = new THREE.Vector3(parseFloat(agent_pos_array[i][j][0]), parseFloat(agent_pos_array[i][j][1]), parseFloat(agent_pos_array[i][j][2]));
+	    	geometry.vertices.push(p);
+	    }
+	    var line = new THREE.Line(geometry, material);
+	    scene.remove(pca_agent_array[i]);
+	    pca_agent_array[i] = line;
+	    scene.add(line);
+
+		var end_point = getPoint(agent_pos_array[i][agent_pos_array[i].length-1],0xff8c00);
+		scene.remove(pca_agent_end_array[i]);
+		pca_agent_end_array[i] = end_point;
 		scene.add(end_point);
 	}
 

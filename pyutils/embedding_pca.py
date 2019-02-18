@@ -9,7 +9,7 @@ feature_arr = np.loadtxt(feature_file)
 cid_arr = np.loadtxt(cluster_file)
 
 X_pca = PCA(n_components=2).fit_transform(feature_arr)
-fname = '../static/cluster0.csv'
+fname = 'tmp.csv'
 with open(fname,'w') as f:
 	f.write('x,y,c\n')
 	for i in range(len(X_pca)):

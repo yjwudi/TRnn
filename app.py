@@ -1,5 +1,5 @@
 import struct
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
 import numpy as np
 from pyutils.road_topic_probability_v2 import road_topic_prob
 from pyutils.road_theme_variation import road_theme_variation
@@ -9,6 +9,7 @@ from pyutils.global_variable import pca_file
 from pyutils.global_variable import cluster_num
 from pyutils.global_variable import id_file as selected_id_file
 from pyutils.global_variable import cluster_file as selected_cluster_file
+from pyutils.select_agent_id import select_agent_id
 
 
 app = Flask(__name__)
@@ -148,7 +149,7 @@ def load_data():
     city_map['road_lines'] = faces3
 
     for base in range(15):
-    	fname = 'Data/agent_path/agent_pos_0/agent_'+str(base)+'.txt'
+    	fname = 'Data2/agent_path/agent_pos_0/agent_'+str(base)+'.txt'
     	read_traj_file(fname)
     selected_id = read_single_file(selected_id_file)
     city_map['selected_id'] = selected_id
@@ -209,8 +210,25 @@ def dated_url_for(endpoint, **values):
 
 @app.route('/')
 def hello_world():
-
     return render_template("index.html", geo=city_map)
+
+@app.route("/select_region",methods=['POST','GET'])
+def select_region():
+	data = request.get_json(force=True)
+	x1 = data['regionx1']
+	y1 = data['regiony1']
+	x2 = data['regionx2']
+	y2 = data['regiony2']
+	selected_id = select_agent_id(traj_map, x1, y1, x2, y2, x_move, y_move)
+	print(len(selected_id))
+	selected_traj = []
+	for idx in selected_id:
+		selected_traj.append(traj_map[idx])
+
+	return jsonify({'selected_id': selected_id,
+					'selected_traj': selected_traj,
+					'selected_cluster_id':[0]*len(selected_id)
+					})
 
 if __name__ == '__main__':
 	load_data()

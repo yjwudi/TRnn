@@ -1,8 +1,8 @@
-from pyutils.global_variable import cluster_num, id_file, cluster_file
+# from pyutils.global_variable import cluster_num, id_file, cluster_file
 
 agent_road_file = 'Data/agent_path/agent_road_0.txt'
-selected_id_file = id_file #'Data/agent_path/selected.txt'
-selected_cluster_file = cluster_file #'Data/agent_path/selected_cluster_1.txt'
+# selected_id_file = id_file #'Data/agent_path/selected.txt'
+# selected_cluster_file = cluster_file #'Data/agent_path/selected_cluster_1.txt'
 outfile = 'static/road_number.tsv'
 
 '''
@@ -18,9 +18,9 @@ def read_single_file(fname):
 		for _ in data:
 			arr.append(int(_))
 	return arr
-def road_high_number():
-	selected_id = read_single_file(selected_id_file)
-	selected_cluster_id = read_single_file(selected_cluster_file)
+def road_high_number(selected_id,selected_cluster_id,cluster_num):
+	# selected_id = read_single_file(selected_id_file)
+	# selected_cluster_id = read_single_file(selected_cluster_file)
 	agent_road = dict()
 	with open(agent_road_file,"r") as f:
 		data = f.readlines()

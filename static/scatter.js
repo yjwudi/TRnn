@@ -36,7 +36,9 @@ function showScatter(plot_width, plot_height, map_data) {
   console.log(color.domain());
 
   // add the graph canvas to the body of the webpage
+  d3.select("#scatter_svg").remove();
   var svg = d3.select("#scatter").append("svg")
+      .attr("id","scatter_svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")

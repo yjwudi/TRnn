@@ -4,7 +4,7 @@ if ( ! Detector.webgl )
 var fov, near, far;
 var lookx, looky, last_lookx, last_looky;
 var lastx, lasty, newx, newy, mousex, mousey, last_mousex, last_mousey;
-var map_data, cluster_sum;
+var map_data, cluster_sum, heatmapInstance;
 var group, camera, scene, renderer, controls;
 var agent_pos_array = new Array();
 var agent_line_array = new Array();
@@ -45,6 +45,7 @@ function clearAgent(){
 	for(var i = 0; i < agent_end_array.length; i++){
 		scene.remove(agent_end_array[i]);
 	}
+	heatmapInstance.setData({max:1,data:[]});
 }
 
 function init()
@@ -181,6 +182,11 @@ function init()
 
 	window.addEventListener( 'resize', onWindowResize, false );
 
+	heatmapInstance = h337.create({
+	  // only container is required, the rest will be defaults
+	  container: document.getElementById('canvas3d')
+	});
+
 }
 
 function showHeatMap(){
@@ -188,10 +194,6 @@ function showHeatMap(){
 	var ce_road_value = map_data.ce_road_value;
 	var maxv = 0;
 	var points = [];
-	var heatmapInstance = h337.create({
-	  // only container is required, the rest will be defaults
-	  container: document.getElementById('canvas3d')
-	});
 	for(var i = 0; i < Math.min(100,ce_road_value.length); i++){
 		var idx = parseInt(ce_road_arr[i]), val = parseFloat(ce_road_value[i]);
 		maxv = Math.max(maxv, val);
@@ -271,7 +273,6 @@ function onDocumentMouseDown( event ) {//按下鼠标
 			select_flag = 2;
 			regionx2 = x;
 			regiony2 = y;
-			//do something
 			$.ajax({
                     type: 'POST',
                     url:"/select_region",
@@ -288,6 +289,8 @@ function onDocumentMouseDown( event ) {//按下鼠标
                         loadAgent();
                     }
                 });
+			select_flag = 0;
+			select_cbox.checked = false;
 		}
 	}
 	else{
@@ -521,11 +524,32 @@ function loadRoad()
 	}
 }
 
-function showSingleAgent(target_idx)
-{
+function startCluster(){
+	map_data.cluster_num = parseInt(document.getElementById('cluster_num_input').value);
+	$.ajax({
+			type: 'POST',
+			url:"/start_cluster",
+			data:JSON.stringify({'cluster_num':map_data.cluster_num}),
+			contentType: 'application/json; charset=UTF-8',
+			success:function(data){ //成功的话，得到消息
+				clearAgent();
+				map_data.selected_cluster_id = data.selected_cluster_id;
+				map_data.ce_road_arr = data.ce_road_arr;
+				map_data.ce_road_value = data.ce_road_value;
+				map_data.connections = data.connections;
+				map_data.circles = data.circles;
+				map_data.road_time_num = data.road_time_num;
+				loadAgent();
+				showScatter(520, 400, map_data);
+				showPCP(850, 450, map_data);
+				showPixel(map_data);
+			}
+		});
+}
+
+function showSingleAgent(target_idx) {
 	if(target_idx == -1)
 		target_idx = parseInt(document.getElementById('show_num_input').value);
-	console.log('target_idx', target_idx);
 	var agent_pos_array = map_data.selected_traj;
 	var cluster_id_array = map_data.selected_cluster_id;
 	for(var i = 0; i < agent_pos_array.length; i++){

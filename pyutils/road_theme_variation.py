@@ -1,7 +1,7 @@
 #encoding=utf-8
 import numpy as np
 import random
-from pyutils.global_variable import cluster_num, id_file, cluster_file
+# from pyutils.global_variable import cluster_num, id_file, cluster_file
 '''
 对于交叉熵大的路，统计每条路在不同时间间隔内，每个主题下的出现次数
 得到每条路在每个时间间隔内所属的主要主题
@@ -18,14 +18,14 @@ time_file = 'Data/agent_path/agent_road_0_time.txt'
 
 
 # road_arr = [5601, 5642, 5605, 5603, 1321, 5650, 1322, 5628, 5656, 8072, 5598, 5662]
-def road_theme_variation(road_arr, high_num_arr):
+def road_theme_variation(road_arr, high_num_arr, selected_id,selected_clusterid,cluster_num):
 	# road_arr = [5601, 5642, 5605, 5603, 1321, 5650, 1322, 5628, 5656, 8072, 5598, 5662]
 	# print(road_arr)
-	selected_id = []
-	with open(id_file, 'r') as f:
-		data = f.readlines()
-		selected_id = list(map(int, data))
-	selected_clusterid = np.loadtxt(cluster_file)
+	# selected_id = []
+	# with open(id_file, 'r') as f:
+	# 	data = f.readlines()
+	# 	selected_id = list(map(int, data))
+	# selected_clusterid = np.loadtxt(cluster_file)
 	idx_id = dict()#idx_id[agent_idx] = id, means agent_idx belongs to class id
 	for i in range(len(selected_id)):
 		idx_id[selected_id[i]] = selected_clusterid[i]

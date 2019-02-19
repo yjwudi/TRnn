@@ -16,8 +16,9 @@ function showPixel(map_data){
 		days[i-1] = i.toString();
 	}
 
-
+  d3.select("#pixel_svg").remove();
   var svg = d3.select("#pixel").append("svg")
+      .attr("id","pixel_svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")

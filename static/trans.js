@@ -11,7 +11,9 @@ function showPCP(plot_width, plot_height, map_data) {
 	var circles = map_data.circles;
 	var cluster_num = map_data.cluster_num;
 
+	d3.select("#trans_svg").remove();
 	var svg = d3.select("#pcp").append("svg")
+		.attr("id","trans_svg")
 	    .attr("width", w + m[1] + m[3])
 	    .attr("height", h + m[0] + m[2])
 	  	.append("g")

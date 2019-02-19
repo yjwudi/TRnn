@@ -10,6 +10,7 @@ from pyutils.global_variable import cluster_num
 from pyutils.global_variable import id_file as selected_id_file
 from pyutils.global_variable import cluster_file as selected_cluster_file
 from pyutils.select_agent_id import select_agent_id
+from pyutils.cluster_attention_app import cluster_attention
 
 
 app = Flask(__name__)
@@ -162,10 +163,10 @@ def load_data():
     city_map['selected_cluster_id'] = selected_cluster_id
 
     #返回的cluster_road_dict, ce_dict都是list，每个元素是（key，value）这样的tuple
-    road_dict, cluster_road_dict, ce_dict = road_topic_prob()
+    road_dict, cluster_road_dict, ce_dict = road_topic_prob(selected_id,selected_cluster_id,cluster_num)
     city_map['cluster_road_dict'] = cluster_road_dict
 
-    road_high_number_set = road_high_number()
+    road_high_number_set = road_high_number(selected_id,selected_cluster_id,cluster_num)
 
     ce_road_num = 1200
     ce_road_arr =[]
@@ -174,7 +175,8 @@ def load_data():
     	ce_road_arr.append(ce_dict[i][0])
     	ce_road_value.append(ce_dict[i][1])
 
-    connections, circles, road_time_num = road_theme_variation(ce_road_arr, road_high_number_set)
+    connections, circles, road_time_num = road_theme_variation(ce_road_arr, road_high_number_set,
+															   selected_id,selected_cluster_id,cluster_num)
     city_map['ce_road_arr'] = ce_road_arr
     city_map['ce_road_value'] = ce_road_value
     city_map['connections'] = connections
@@ -220,7 +222,7 @@ def select_region():
 	x2 = data['regionx2']
 	y2 = data['regiony2']
 	selected_id = select_agent_id(traj_map, x1, y1, x2, y2, x_move, y_move)
-	print(len(selected_id))
+	city_map['selected_id'] = selected_id
 	selected_traj = []
 	for idx in selected_id:
 		selected_traj.append(traj_map[idx])
@@ -229,6 +231,31 @@ def select_region():
 					'selected_traj': selected_traj,
 					'selected_cluster_id':[0]*len(selected_id)
 					})
+
+@app.route("/start_cluster",methods=['POST','GET'])
+def start_cluster():
+	data = request.get_json(force=True)
+	cluster_num = data['cluster_num']
+	selected_id = city_map['selected_id']
+	selected_cluster_id = cluster_attention(selected_id, cluster_num)
+
+	road_dict, cluster_road_dict, ce_dict = road_topic_prob(selected_id, selected_cluster_id, cluster_num)
+	road_high_number_set = road_high_number(selected_id, selected_cluster_id, cluster_num)
+
+	ce_road_num = 1200
+	ce_road_arr = []
+	ce_road_value = []
+	for i in range(min(ce_road_num, len(ce_dict))):
+		ce_road_arr.append(ce_dict[i][0])
+		ce_road_value.append(ce_dict[i][1])
+	connections, circles, road_time_num = road_theme_variation(ce_road_arr, road_high_number_set,
+															   selected_id, selected_cluster_id, cluster_num)
+	return jsonify({'selected_cluster_id': selected_cluster_id,
+					'ce_road_arr':ce_road_arr,
+					'ce_road_value':ce_road_value,
+					'connections':connections,
+					'circles':circles,
+					'road_time_num':road_time_num})
 
 if __name__ == '__main__':
 	load_data()

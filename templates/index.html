@@ -12,7 +12,6 @@
 		<script src="static/three-js/examples/js/Detector.js"></script>
 		<script src="static/three-js/examples/js/libs/stats.min.js"></script>
 		<script src="static/heatmap-js/build/heatmap.js"></script>
-		<script src="static/CityMap.js"></script>
 		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 		<script src="https://d3js.org/d3-path.v1.min.js"></script>
     	<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
@@ -21,6 +20,7 @@
     	<script src="static/trans.js" charset="utf-8"></script>
     	<script src="static/pixel.js" charset="utf-8"></script>
 		<script src="static/line_chart.js" charset="utf-8"></script>
+		<script src="static/CityMap.js"></script>
     	<script type="text/javascript">
 			function startRender(){
 				var map_data = JSON.parse('{{ geo | tojson | safe}}');
@@ -89,16 +89,20 @@
 		</div> -->
 		<div id="interact">
 			<input type="text" id="cluster_num_input" />
-			<input type="button" value="cluster" id="cluster_btn" />
+			<input type="button" value="cluster" id="cluster_btn" onclick="startCluster();" />
 			<input type="text" id="show_num_input" />
 			<input type="button" value="show" id="show_single_btn" onclick="showSingleAgent(-1);" />
 			<input type="button" value="clear" id="clear_btn" onclick="clearAgent();" />
 			<input type="button" value="heatmap" id="heatmap_btn" onclick="showHeatMap();" />
-
 			<input type="checkbox" value="Car" id="select_cbox" />
   			<input type="button" value="Select Region" id="nouse_btn" />
 		</div>
 		<div id="canvas3d"></div>
+		<!--<div id="control">-->
+			<!--<label for="male">Male</label>-->
+			<!--<br>-->
+			<!--<input type="text" id="cluster_num_input" />-->
+		<!--</div>-->
 		<div>
 			<div id="pcp" style="display:inline;"></div>
 			<div id="scatter" style="display:inline;"></div>

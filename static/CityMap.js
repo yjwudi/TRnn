@@ -539,6 +539,7 @@ function startCluster(){
 				map_data.connections = data.connections;
 				map_data.circles = data.circles;
 				map_data.road_time_num = data.road_time_num;
+				map_data.semantics_dict = data.semantics_dict;
 				loadAgent();
 				showScatter(520, 400, map_data);
 				showPCP(850, 450, map_data);
@@ -619,41 +620,85 @@ function getPoint(point, color_){
 
 function getMaterial(cluster_idx){
 	var material = new THREE.LineBasicMaterial({color:0xff0000});
-	switch(cluster_idx){
-		case -1:
-			material = new THREE.LineBasicMaterial({color:0xffffff});
-			break;
-		case 0:
-			material = new THREE.LineBasicMaterial({color:0xff0000});
-			break;
-		case 1:
-			material = new THREE.LineBasicMaterial({color:0x006400});
-			break;
-		case 2:
-			material = new THREE.LineBasicMaterial({color:0x0000ff});
-			break;
-		case 3:
-			material = new THREE.LineBasicMaterial({color:0x836fff});
-			break;
-		case 4:
-			material = new THREE.LineBasicMaterial({color:0x8b008b});
-			break;
-		case 5:
-			material = new THREE.LineBasicMaterial({color:0xff6a6a});
-			break;
-		case 6:
-			material = new THREE.LineBasicMaterial({color:0xffd700});
-			break;
-	}
+	var color_v = get_color(cluster_idx);
+	material = new THREE.LineBasicMaterial({color:color_v});
 	return material;
+}
+
+function get_color(idx){
+	switch(idx){
+		case 0:
+			return "#ff0000";
+		case 1:
+			return "#006400";
+		case 2:
+			return "#0000ff";
+		case 3:
+			return "#836fff";
+		case 4:
+			return "#8b008b";
+		case 5:
+			return "#ff6a6a";
+		case 6:
+			return "#ffd700";
+		default:
+			return "#000000";
+	}
 }
 
 function loadAgent() 
 {
+	document.getElementById('semantics').innerHTML = "";
 	var cluster_num = map_data.cluster_num;
+	var div = document.getElementById("semantics");
+    var tableNode=document.createElement("table");
+    tableNode.setAttribute("id","table");
+    tableNode.setAttribute("style","margin:auto");
 	for(var i = 0; i < cluster_num; i++){
 		showSingleAgent(i);
+		var trNode=tableNode.insertRow();
+		var color_v = get_color(i);
+		var tdNode=trNode.insertCell();
+		tdNode.innerHTML=i.toString();
+		tdNode.setAttribute("style","width:80px;background-color:"+color_v+";text-align:center");
+		var input_id = "cluster_type"+i.toString();
+		tdNode=trNode.insertCell();
+		tdNode.innerHTML="<input type=\"text\" id="+input_id+" />";
+		tdNode.setAttribute("style","width:120px;text-align:left");
+
 	}
+	div.appendChild(tableNode);
+	for(var i = 0; i < cluster_num; i++){
+		var input_id = "cluster_type"+i.toString();
+		if(map_data.semantics_dict==undefined)
+			document.getElementById(input_id).value="Unknown";
+		else
+			document.getElementById(input_id).value=map_data.semantics_dict[i];
+    }
+}
+
+function showTest(){
+	map_data.semantics_dict = {};
+	for(var i = 0; i < map_data.cluster_num; i++) {
+		var input_id = "cluster_type"+i.toString();
+		map_data.semantics_dict[i] = document.getElementById(input_id).value;
+    }
+	map_data.semantics_dict[map_data.cluster_num] = "Unknown";
+	console.log(map_data.semantics_dict);
+	map_data.cluster_num = map_data.cluster_num+1;
+	$.ajax({
+			type: 'POST',
+			url:"/cluster_test",
+			data:JSON.stringify({'cluster_num':map_data.cluster_num}),
+			contentType: 'application/json; charset=UTF-8',
+			success:function(data){ //成功的话，得到消息
+				clearAgent();
+				map_data.selected_id = data.selected_id;
+				map_data.selected_cluster_id = data.selected_cluster_id;
+				map_data.selected_traj = data.selected_traj;
+				loadAgent();
+			}
+		});
 }
 
 function onWindowResize()

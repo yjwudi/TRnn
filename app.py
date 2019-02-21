@@ -1,6 +1,8 @@
 import struct
-from flask import Flask, render_template, request, jsonify
+import os
 import numpy as np
+from flask import Flask, render_template, request, jsonify
+from random import shuffle
 from pyutils.road_topic_probability_v2 import road_topic_prob
 from pyutils.road_theme_variation import road_theme_variation
 from pyutils.road_high_number import road_high_number
@@ -11,6 +13,7 @@ from pyutils.global_variable import id_file as selected_id_file
 from pyutils.global_variable import cluster_file as selected_cluster_file
 from pyutils.select_agent_id import select_agent_id
 from pyutils.cluster_attention_app import cluster_attention
+from pyutils.get_feature import get_feature
 
 
 app = Flask(__name__)
@@ -25,6 +28,7 @@ road_file = 'Data/road.dat'
 # road_file = 'Data/main_road.dat'
 agent_road_file = 'Data/agent_path/agent_road_0.txt'
 
+ce_road_num = 1200
 x_move = 5391
 y_move = 61852.5
 traj_map = {} #traj_map[idx] = [[x1,y1,z1],[x2,y2,z2]...]
@@ -168,7 +172,6 @@ def load_data():
 
     road_high_number_set = road_high_number(selected_id,selected_cluster_id,cluster_num)
 
-    ce_road_num = 1200
     ce_road_arr =[]
     ce_road_value = []
     for i in range(min(ce_road_num,len(ce_dict))):
@@ -221,11 +224,23 @@ def select_region():
 	y1 = data['regiony1']
 	x2 = data['regionx2']
 	y2 = data['regiony2']
-	selected_id = select_agent_id(traj_map, x1, y1, x2, y2, x_move, y_move)
+	all_id = select_agent_id(traj_map, x1, y1, x2, y2, x_move, y_move)
+	print(all_id[0])
+	shuffle(all_id)
+	print(all_id[0])
+	selected_id = all_id[0:int(len(all_id)*0.8)]
+	selected_id_test = all_id[int(len(all_id)*0.8):]
+	print(len(selected_id), len(selected_id_test))
+
 	city_map['selected_id'] = selected_id
+	city_map['selected_id_test'] = selected_id_test
 	selected_traj = []
+	selected_traj_test = []
 	for idx in selected_id:
 		selected_traj.append(traj_map[idx])
+	for idx in selected_id_test:
+		selected_traj_test.append(traj_map[idx])
+	city_map['selected_traj_test'] = selected_traj_test
 
 	return jsonify({'selected_id': selected_id,
 					'selected_traj': selected_traj,
@@ -236,13 +251,13 @@ def select_region():
 def start_cluster():
 	data = request.get_json(force=True)
 	cluster_num = data['cluster_num']
+	city_map['cluster_num'] = cluster_num
 	selected_id = city_map['selected_id']
-	selected_cluster_id = cluster_attention(selected_id, cluster_num)
+	selected_cluster_id, city_map['cluster_centers'] = cluster_attention(selected_id, cluster_num)
 
 	road_dict, cluster_road_dict, ce_dict = road_topic_prob(selected_id, selected_cluster_id, cluster_num)
 	road_high_number_set = road_high_number(selected_id, selected_cluster_id, cluster_num)
 
-	ce_road_num = 1200
 	ce_road_arr = []
 	ce_road_value = []
 	for i in range(min(ce_road_num, len(ce_dict))):
@@ -250,12 +265,42 @@ def start_cluster():
 		ce_road_value.append(ce_dict[i][1])
 	connections, circles, road_time_num = road_theme_variation(ce_road_arr, road_high_number_set,
 															   selected_id, selected_cluster_id, cluster_num)
+	semantics_dict = {}
+	for i in range(cluster_num):
+		semantics_dict[i] = 'Unknown'
 	return jsonify({'selected_cluster_id': selected_cluster_id,
 					'ce_road_arr':ce_road_arr,
 					'ce_road_value':ce_road_value,
 					'connections':connections,
 					'circles':circles,
-					'road_time_num':road_time_num})
+					'road_time_num':road_time_num,
+					'semantics_dict':semantics_dict})
+
+@app.route("/cluster_test",methods=['POST','GET'])
+def cluster_test():
+	cluster_num = city_map['cluster_num']
+	cluster_centers = city_map['cluster_centers']
+	print('center0: ', cluster_centers)
+	dist_threshold = 10
+	selected_id_test = city_map['selected_id_test']
+	selected_cluster_id_test = [-1]*len(selected_id_test)
+	feature_arr = get_feature(selected_id_test)
+	for idx in range(len(selected_id_test)):
+		min_dist = dist_threshold+1
+		for i in range(cluster_num):
+			dist = np.linalg.norm(feature_arr[idx]-cluster_centers[i])
+			if dist < min_dist:
+				min_dist = dist
+				selected_cluster_id_test[idx] = i
+	for i in range(len(selected_id_test)):
+		if selected_cluster_id_test[i]==-1:
+			selected_cluster_id_test[i] = cluster_num
+	cluster_num += 1
+	return jsonify({'selected_id': selected_id_test,
+					'selected_cluster_id': selected_id_test,
+					'selected_traj': city_map['selected_traj_test']
+					})
+
 
 if __name__ == '__main__':
 	load_data()

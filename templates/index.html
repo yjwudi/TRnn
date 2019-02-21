@@ -21,8 +21,11 @@
     	<script src="static/pixel.js" charset="utf-8"></script>
 		<script src="static/line_chart.js" charset="utf-8"></script>
 		<script src="static/CityMap.js"></script>
+		<script src="static/test_code/table.js"></script>
     	<script type="text/javascript">
 			function startRender(){
+			    // createTable();
+			    // return;
 				var map_data = JSON.parse('{{ geo | tojson | safe}}');
 				threeStart(map_data);
 				var plot_width = 500, plot_height = 500;
@@ -44,49 +47,14 @@
 				showLineChart(class_time_arr);
 			}
 		</script>
-		<link rel="stylesheet" href="static/scatter.css" charset="utf-8">
-		<link rel="stylesheet" href="static/pcp.css" charset="utf-8">
-		<link rel="stylesheet" href="static/pixel.css" charset="utf-8">
-		<style>
-			body {
-				font-family: Monospace;
-				background-color: #fff;
-				width: 100%;
-				text-align:center;
-				overflow: auto;
-			}
-			#interact {
-				/*position: absolute;*/
-				color: #fff;
-				top: 0px;
-				width: 100%;
-				padding: 5px;
-				text-align:center;
-			}
-			#canvas3d {
-				border: none;
-	            width: 80%;
-	            height: 600px;
-				margin-left: auto;
-				margin-right: auto;
-				text-align:center;
-	            background-color: #EEEEEE;
-			}
-		</style>
+		<link rel="stylesheet" href="static/css/scatter.css" charset="utf-8">
+		<link rel="stylesheet" href="static/css/pcp.css" charset="utf-8">
+		<link rel="stylesheet" href="static/css/pixel.css" charset="utf-8">
+		<link rel="stylesheet" href="static/css/index.css" charset="utf-8">
 
 	</head>
 	<body onload='startRender();'>
-	<!-- <body> -->
 
-		<!-- <div id="info">
-			<span style="padding-left:70%">
-				<input type="button" value="make" onclick="loadMap();"/>
-				<input type="text" id="y_limit" size="10" />
-				<input type="text" id="cluster_id" size="10" />
-				<input type="button" value="show_lower" onclick="showAgent(true);"/>
-				<input type="button" value="show_upper" onclick="showAgent(false);"/>
-			</span>
-		</div> -->
 		<div id="interact">
 			<input type="text" id="cluster_num_input" />
 			<input type="button" value="cluster" id="cluster_btn" onclick="startCluster();" />
@@ -96,13 +64,12 @@
 			<input type="button" value="heatmap" id="heatmap_btn" onclick="showHeatMap();" />
 			<input type="checkbox" value="Car" id="select_cbox" />
   			<input type="button" value="Select Region" id="nouse_btn" />
+			<input type="button" value="Example" id="test_btn" onclick="showTest();"/>
 		</div>
 		<div id="canvas3d"></div>
-		<!--<div id="control">-->
-			<!--<label for="male">Male</label>-->
-			<!--<br>-->
-			<!--<input type="text" id="cluster_num_input" />-->
-		<!--</div>-->
+		<div id="semantics">
+			<input type="text" id="hehe" />
+		</div>
 		<div>
 			<div id="pcp" style="display:inline;"></div>
 			<div id="scatter" style="display:inline;"></div>

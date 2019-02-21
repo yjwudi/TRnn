@@ -1,18 +1,9 @@
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
-import numpy as np
-import pymongo
+from pyutils.get_feature import get_feature
 
 def cluster_attention(selected_id, cluster_num):
-    myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-    mydb = myclient["featuredb"]
-    mycol = mydb["sites"]
-    feature_arr = []
-    myquery = {"id": {"$in": selected_id}}
-    x = mycol.find(myquery)
-    for i in x:
-        feature = np.array(i["feature"])
-        feature_arr.append(feature)
+    feature_arr = get_feature(selected_id)
     kmeans_total = KMeans(n_clusters=cluster_num, random_state=0).fit(feature_arr)
     selected_cluster_id = []
     for _ in kmeans_total.labels_:
@@ -28,4 +19,4 @@ def cluster_attention(selected_id, cluster_num):
             f.write(str(kmeans_total.labels_[i]) + ',')
             f.write(str(int(selected_id[i])) + '\n')
 
-    return selected_cluster_id
+    return selected_cluster_id, kmeans_total.cluster_centers_

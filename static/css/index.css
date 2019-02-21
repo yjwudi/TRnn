@@ -1,0 +1,24 @@
+body {
+    font-family: Monospace;
+    background-color: #fff;
+    width: 100%;
+    text-align:center;
+    overflow: auto;
+}
+#interact {
+    /*position: absolute;*/
+    color: #fff;
+    top: 0px;
+    width: 100%;
+    padding: 5px;
+    text-align:center;
+}
+#canvas3d {
+    border: none;
+    width: 80%;
+    height: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align:center;
+    background-color: #EEEEEE;
+}

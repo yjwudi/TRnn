@@ -28,6 +28,7 @@ road_file = 'Data/road.dat'
 # road_file = 'Data/main_road.dat'
 agent_road_file = 'Data/agent_path/agent_road_0.txt'
 
+case_id = -1
 ce_road_num = 1200
 x_move = 5391
 y_move = 61852.5
@@ -225,26 +226,44 @@ def select_region():
 	x2 = data['regionx2']
 	y2 = data['regiony2']
 	all_id = select_agent_id(traj_map, x1, y1, x2, y2, x_move, y_move)
-	print(all_id[0])
 	shuffle(all_id)
-	print(all_id[0])
 	selected_id = all_id[0:int(len(all_id)*0.8)]
 	selected_id_test = all_id[int(len(all_id)*0.8):]
-	print(len(selected_id), len(selected_id_test))
+	global case_id
+	case_id = -1
+	return json_data(selected_id, selected_id_test)
 
+@app.route("/select_case",methods=['POST','GET'])
+def select_case():
+	data = request.get_json(force=True)
+	idx = data['idx']
+	tmp_id = np.loadtxt('Data2/agent_path/v'+str(idx)+'/selected.txt')
+	all_id = []
+	for v in tmp_id:
+		all_id.append(int(v))
+	shuffle(all_id)
+	selected_id = all_id[0:int(len(all_id) * 0.8)]
+	print(len(selected_id))
+	selected_id_test = all_id[int(len(all_id) * 0.8):]
+	global case_id
+	case_id = idx
+	return json_data(selected_id, selected_id_test)
+
+def json_data(selected_id, selected_id_test):
 	city_map['selected_id'] = selected_id
 	city_map['selected_id_test'] = selected_id_test
 	selected_traj = []
 	selected_traj_test = []
 	for idx in selected_id:
 		selected_traj.append(traj_map[idx])
+	city_map['selected_traj'] = selected_traj
 	for idx in selected_id_test:
 		selected_traj_test.append(traj_map[idx])
 	city_map['selected_traj_test'] = selected_traj_test
 
 	return jsonify({'selected_id': selected_id,
 					'selected_traj': selected_traj,
-					'selected_cluster_id':[0]*len(selected_id)
+					'selected_cluster_id': [0] * len(selected_id)
 					})
 
 @app.route("/start_cluster",methods=['POST','GET'])
@@ -253,7 +272,8 @@ def start_cluster():
 	cluster_num = data['cluster_num']
 	city_map['cluster_num'] = cluster_num
 	selected_id = city_map['selected_id']
-	selected_cluster_id, city_map['cluster_centers'] = cluster_attention(selected_id, cluster_num)
+	selected_cluster_id, city_map['cluster_centers'] = cluster_attention(selected_id, cluster_num, case_id)
+	city_map['selected_cluster_id'] = selected_cluster_id
 
 	road_dict, cluster_road_dict, ce_dict = road_topic_prob(selected_id, selected_cluster_id, cluster_num)
 	road_high_number_set = road_high_number(selected_id, selected_cluster_id, cluster_num)
@@ -280,7 +300,6 @@ def start_cluster():
 def cluster_test():
 	cluster_num = city_map['cluster_num']
 	cluster_centers = city_map['cluster_centers']
-	print('center0: ', cluster_centers)
 	dist_threshold = 10
 	selected_id_test = city_map['selected_id_test']
 	selected_cluster_id_test = [-1]*len(selected_id_test)
@@ -297,10 +316,16 @@ def cluster_test():
 			selected_cluster_id_test[i] = cluster_num
 	cluster_num += 1
 	return jsonify({'selected_id': selected_id_test,
-					'selected_cluster_id': selected_id_test,
+					'selected_cluster_id': selected_cluster_id_test,
 					'selected_traj': city_map['selected_traj_test']
 					})
 
+@app.route("/show_train",methods=['POST','GET'])
+def show_train():
+	return jsonify({'selected_id': city_map['selected_id'],
+					'selected_cluster_id': city_map['selected_cluster_id'],
+					'selected_traj': city_map['selected_traj']
+					})
 
 if __name__ == '__main__':
 	load_data()

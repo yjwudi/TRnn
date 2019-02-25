@@ -281,12 +281,9 @@ function onDocumentMouseDown( event ) {//按下鼠标
 					// dataType: 'json',
                     contentType: 'application/json; charset=UTF-8',
                     success:function(data){ //成功的话，得到消息
-                        clearAgent();
-                        map_data.selected_id = data.selected_id;
-                        map_data.selected_traj = data.selected_traj;
-                        map_data.selected_cluster_id = data.selected_cluster_id;
                         map_data.cluster_num = 1;
-                        loadAgent();
+                        map_data.semantics_dict = {};
+                        successFunc(data);
                     }
                 });
 			select_flag = 0;
@@ -553,11 +550,13 @@ function showSingleAgent(target_idx) {
 		target_idx = parseInt(document.getElementById('show_num_input').value);
 	var agent_pos_array = map_data.selected_traj;
 	var cluster_id_array = map_data.selected_cluster_id;
+	var sum_ = 0;
 	for(var i = 0; i < agent_pos_array.length; i++){
 		var cluster_idx = parseInt(cluster_id_array[i]);
 		if(cluster_idx!=target_idx) {
 		    continue;
         }
+		sum_++;
 		var material = getMaterial(cluster_idx);
 	    var geometry = new THREE.Geometry();
 	    for(var j = 0; j < agent_pos_array[i].length; j++)
@@ -659,7 +658,7 @@ function loadAgent()
 		var trNode=tableNode.insertRow();
 		var color_v = get_color(i);
 		var tdNode=trNode.insertCell();
-		tdNode.innerHTML=i.toString();
+		tdNode.innerHTML=(i+1).toString();
 		tdNode.setAttribute("style","width:80px;background-color:"+color_v+";text-align:center");
 		var input_id = "cluster_type"+i.toString();
 		tdNode=trNode.insertCell();
@@ -692,14 +691,54 @@ function showTest(){
 			data:JSON.stringify({'cluster_num':map_data.cluster_num}),
 			contentType: 'application/json; charset=UTF-8',
 			success:function(data){ //成功的话，得到消息
-				clearAgent();
-				map_data.selected_id = data.selected_id;
-				map_data.selected_cluster_id = data.selected_cluster_id;
-				map_data.selected_traj = data.selected_traj;
-				loadAgent();
+				successFunc(data);
 			}
 		});
 }
+
+function showTrain(){
+	$.ajax({
+		type: 'POST',
+		url:"/show_train",
+		// data:JSON.stringify({'idx':idx}),
+		// dataType: 'json',
+		contentType: 'application/json; charset=UTF-8',
+		success:function(data){ //成功的话，得到消息
+			map_data.cluster_num = parseInt(document.getElementById('cluster_num_input').value);
+			successFunc(data);
+		}
+	});
+}
+
+function showTestCase() {
+	var selId = document.getElementById("selecte_case");
+	var v = selId.options[selId.selectedIndex].value;
+	if(v=="null")
+		return ;
+	var idx = parseInt(v);
+	console.log('idx',idx);
+	$.ajax({
+		type: 'POST',
+		url:"/select_case",
+		data:JSON.stringify({'idx':idx}),
+		// dataType: 'json',
+		contentType: 'application/json; charset=UTF-8',
+		success:function(data){ //成功的话，得到消息
+			map_data.cluster_num = 1;
+			map_data.semantics_dict = {};
+			successFunc(data);
+		}
+	});
+}
+
+function successFunc(data){
+	clearAgent();
+	map_data.selected_id = data.selected_id;
+	map_data.selected_traj = data.selected_traj;
+	map_data.selected_cluster_id = data.selected_cluster_id;
+	loadAgent();
+}
+
 
 function onWindowResize()
 {

@@ -56,15 +56,22 @@
 	<body onload='startRender();'>
 
 		<div id="interact">
-			<input type="text" id="cluster_num_input" />
+			<input type="text" id="cluster_num_input" style="width:30px" />
 			<input type="button" value="cluster" id="cluster_btn" onclick="startCluster();" />
-			<input type="text" id="show_num_input" />
+			<input type="text" id="show_num_input" style="width:30px" />
 			<input type="button" value="show" id="show_single_btn" onclick="showSingleAgent(-1);" />
 			<input type="button" value="clear" id="clear_btn" onclick="clearAgent();" />
 			<input type="button" value="heatmap" id="heatmap_btn" onclick="showHeatMap();" />
 			<input type="checkbox" value="Car" id="select_cbox" />
   			<input type="button" value="Select Region" id="nouse_btn" />
-			<input type="button" value="Example" id="test_btn" onclick="showTest();"/>
+			<input type="button" value="ShowTest" id="test_btn" onclick="showTest();"/>
+			<input type="button" value="ShowTrain" id="train_btn" onclick="showTrain();"/>
+			<select id="selecte_case" onclick="showTestCase()">
+				<option >null</option>
+				<option value="0" >0</option>
+				<option value="1" >1</option>
+				<option value="2" >2</option>
+			</select>
 		</div>
 		<div id="canvas3d"></div>
 		<div id="semantics">

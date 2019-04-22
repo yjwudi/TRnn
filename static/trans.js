@@ -34,7 +34,7 @@ function showPCP(plot_width, plot_height, map_data) {
 	var widthRange = d3.scale.linear().domain([0, maxv]).range([0, 20]);
 
 	var radius_ = 30;
-	var x_dis = 150, y_dis = 80;
+	var x_dis = 130, y_dis = 80;
 	var bXmove = 100, bYmove = 5;
 	var dayLabels = svg.selectAll(".dayLabel")
 		               .data(days)

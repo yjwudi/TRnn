@@ -1,5 +1,6 @@
 import struct
 import os
+import copy
 import numpy as np
 from flask import Flask, render_template, request, jsonify
 from random import shuffle
@@ -124,6 +125,7 @@ def read_traj_file(fname):
 			head = f.readline()
 
 city_map = {}
+ori_map = {}
 
 def load_data():
 	
@@ -200,7 +202,8 @@ def load_data():
     city_map['agent_road'] = agent_road
     city_map['cluster_num'] = cluster_num
     city_map['pca_file'] = pca_file
-
+    global ori_map
+    ori_map = copy.deepcopy(city_map)
 
 @app.context_processor
 def override_url_for():
@@ -216,7 +219,7 @@ def dated_url_for(endpoint, **values):
 
 @app.route('/')
 def hello_world():
-    return render_template("index.html", geo=city_map)
+    return render_template("index.html", geo=ori_map)
 
 @app.route("/select_region",methods=['POST','GET'])
 def select_region():

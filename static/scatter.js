@@ -1,6 +1,6 @@
 function showScatter(plot_width, plot_height, map_data) {
 
-  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+  var margin = {top: 20, right: 20, bottom: 100, left: 40},
       width = plot_width - margin.left - margin.right,
       height = plot_height - margin.top - margin.bottom;
   var pca_file = map_data.pca_file;

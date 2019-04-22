@@ -29,8 +29,8 @@
 				var map_data = JSON.parse('{{ geo | tojson | safe}}');
 				threeStart(map_data);
 				var plot_width = 500, plot_height = 500;
-				showScatter(520, 400, map_data);
-				showPCP(850, 450, map_data);
+				showScatter(520, 450, map_data);
+				showPCP(800, 450, map_data);
 				showPixel(map_data);
 				var road_time_num = map_data.road_time_num;
 				console.log(road_time_num[1426]);
@@ -44,7 +44,7 @@
 				        class_time_arr[j][i] = time_num_arr[i][j];
 					}
 				}
-				showLineChart(class_time_arr);
+				showLineChart(class_time_arr, map_data);
 			}
 		</script>
 		<link rel="stylesheet" href="static/css/scatter.css" charset="utf-8">
@@ -55,18 +55,19 @@
 	</head>
 	<body onload='startRender();'>
 
-		<div id="interact">
+		<div id="interact" style="float:auto; display:inline;">
 			<input type="text" id="cluster_num_input" style="width:30px" />
 			<input type="button" value="cluster" id="cluster_btn" onclick="startCluster();" />
 			<input type="text" id="show_num_input" style="width:30px" />
 			<input type="button" value="show" id="show_single_btn" onclick="showSingleAgent(-1);" />
 			<input type="button" value="clear" id="clear_btn" onclick="clearAgent();" />
 			<input type="button" value="heatmap" id="heatmap_btn" onclick="showHeatMap();" />
+			<!--<br>-->
 			<input type="checkbox" value="Car" id="select_cbox" />
-  			<input type="button" value="Select Region" id="nouse_btn" />
+			<input type="button" value="Select Region" id="nouse_btn" />
 			<input type="button" value="ShowTest" id="test_btn" onclick="showTest();"/>
 			<input type="button" value="ShowTrain" id="train_btn" onclick="showTrain();"/>
-			<select id="selecte_case" onclick="showTestCase()">
+			<select id="selecte_case" onchange="showTestCase()">
 				<option >null</option>
 				<option value="0" >0</option>
 				<option value="1" >1</option>
@@ -74,16 +75,17 @@
 			</select>
 		</div>
 		<div id="canvas3d"></div>
-		<div id="semantics">
+		<div id="semantics" style="width:200px;height:200px;display:inline;">
 			<input type="text" id="hehe" />
+		</div>
+
+		<div>
+			<div id="pixel" style="display:inline;"></div>
+			<div id="line_chart" style="display:inline;"></div>
 		</div>
 		<div>
 			<div id="pcp" style="display:inline;"></div>
 			<div id="scatter" style="display:inline;"></div>
-		</div>
-		<div>
-			<div id="pixel" style="display:inline;"></div>
-			<div id="line_chart" style="display:inline;"></div>
 		</div>
 
 		<!-- <input type="button" name="xAxis" value="xAxis"> -->

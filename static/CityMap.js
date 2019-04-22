@@ -161,21 +161,6 @@ function init()
 	scene.add(shelter_mesh);
 	console.log('shelter added');
 
-	// var road_vertices = map_data.road_vertices;
-	// var road_lines = map_data.road_lines;
-	// for(var i = 0; i < road_lines.length; i++)
-	// {
-	// 	var line = road_lines[i];
-	// 	var idx1 = parseInt(line[0]), idx2 = parseInt(line[1]);
-	// 	var p1 = road_vertices[idx1], p2 = road_vertices[idx2];
-	// 	var material = new THREE.LineBasicMaterial({color:0xffffff});  
-	//     var geometry = new THREE.Geometry();  
-	//     geometry.vertices.push(new THREE.Vector3(parseFloat(p1[0]),parseFloat(p1[1]),parseFloat(p1[2])));  
-	//     geometry.vertices.push(new THREE.Vector3(parseFloat(p2[0]),parseFloat(p2[1]),parseFloat(p2[2])));
-	//     scene.add(new THREE.Line(geometry, material));
-	// }
-	// console.log('road added');
-
 
 	camera.position.set(0, 1700, 3000);
 	camera.lookAt(0, 1700, 0);
@@ -426,10 +411,24 @@ function addRoad(idx)
 	var idx1 = parseInt(line[0]), idx2 = parseInt(line[1]);
 	var p1 = road_vertices[idx1], p2 = road_vertices[idx2];
 	var material = new THREE.LineBasicMaterial({color:0xff0000});
-    var geometry = new THREE.Geometry();  
+    var geometry = new THREE.Geometry();
     geometry.vertices.push(new THREE.Vector3(parseFloat(p1[0]),parseFloat(p1[1]),parseFloat(p1[2])));  
     geometry.vertices.push(new THREE.Vector3(parseFloat(p2[0]),parseFloat(p2[1]),parseFloat(p2[2])));
     scene.add(new THREE.Line(geometry, material));
+
+    var road_time_num = map_data.road_time_num;
+	// console.log(road_time_num[idx]);
+	var time_num_arr = road_time_num[idx];
+	var class_time_arr = new Array();
+	var time_n = time_num_arr.length, cluster_n = time_num_arr[0].length;
+	for(var i = 0; i < cluster_n; i++)
+		class_time_arr[i] = new Array();
+	for(var i = 0; i < time_n; i++){
+		for(var j = 0; j < cluster_n; j++){
+			class_time_arr[j][i] = time_num_arr[i][j];
+		}
+	}
+	showLineChart(class_time_arr, map_data);
 }
 
 /*
@@ -716,7 +715,7 @@ function showTestCase() {
 	if(v=="null")
 		return ;
 	var idx = parseInt(v);
-	console.log('idx',idx);
+	console.log('select test case idx:',idx);
 	$.ajax({
 		type: 'POST',
 		url:"/select_case",
